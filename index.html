@@ -105,9 +105,9 @@
     font-size: 0.72rem;
     letter-spacing: 0.05em;
     padding: 0.5rem 1.2rem;
-    border: 1px solid var(--gold);
-    background: var(--gold);
-    color: var(--black);
+    border: 1px solid var(--black);
+    background: var(--black);
+    color: var(--white);
     text-decoration: none;
     transition: all 0.2s;
     border-radius: 2px;
@@ -116,7 +116,7 @@
 
   .nav-cta:hover {
     background: transparent;
-    color: var(--gold);
+    color: var(--black);
   }
 
   /* HERO */
@@ -1523,6 +1523,15 @@
     .advanced-intro { flex-direction:column; gap:1rem; }
     .asset-row input[type="range"] { width:80px; }
     .brokers-list { justify-content:flex-start; }
+    /* Canvas/chart fixes for mobile */
+    canvas { max-width:100% !important; height:auto !important; }
+    #bullBearChart, #candlestickChart, #volumeChart, #orderChart { width:100% !important; }
+    .money-card[style*="grid-column"] { grid-column:1 !important; }
+    .asset-row { flex-wrap:wrap; }
+    .portfolio-donut-wrap { padding:1rem; }
+    .game-header { flex-direction:column; }
+    .calc-result-value { font-size:2.2rem; }
+    .terms-grid { grid-template-columns:1fr 1fr; }
   }
 
   @media (max-width: 480px) {
@@ -3124,28 +3133,34 @@
     // Try to pick the most natural sounding voice available
     const voices = window.speechSynthesis.getVoices();
 
-    // Priority list — best voices first across all platforms
+    // Priority list — best voices first across all platforms including mobile
     const preferredNames = [
-      // Mac / iOS (very natural)
-      'Samantha', 'Karen', 'Moira', 'Tessa', 'Veena',
-      'Daniel', 'Alex', 'Tom',
-      // Windows (natural)
-      'Microsoft Aria Online', 'Microsoft Guy Online',
-      'Microsoft Zira', 'Microsoft David',
-      // Chrome / Android
+      // iOS (very natural)
+      'Samantha', 'Karen', 'Moira', 'Tessa',
+      'Daniel', 'Alex', 'Rishi',
+      // Android / Chrome
       'Google US English', 'Google UK English Female',
       'Google UK English Male',
+      // Windows natural voices
+      'Microsoft Aria Online', 'Microsoft Jenny Online',
+      'Microsoft Guy Online', 'Microsoft Zira',
     ];
 
     let chosenVoice = null;
+
+    // First try preferred list
     for (const name of preferredNames) {
       const match = voices.find(v => v.name.includes(name));
       if (match) { chosenVoice = match; break; }
     }
 
-    // Fallback — any en-US voice
+    // Fallback — any en-US non-compact voice
     if (!chosenVoice) {
-      chosenVoice = voices.find(v => v.lang === 'en-US' && !v.name.toLowerCase().includes('compact'));
+      chosenVoice = voices.find(v =>
+        v.lang === 'en-US' &&
+        !v.name.toLowerCase().includes('compact') &&
+        !v.name.toLowerCase().includes('novice')
+      );
     }
 
     // Last resort — any English voice
@@ -3156,6 +3171,8 @@
     if (chosenVoice) {
       ttsUtterance.voice = chosenVoice;
       document.getElementById('ttsStatus').textContent = `Reading with ${chosenVoice.name.split(' ').slice(0,2).join(' ')}...`;
+    } else {
+      document.getElementById('ttsStatus').textContent = 'Reading page...';
     }
 
     ttsUtterance.onstart = () => {
@@ -3930,5 +3947,6 @@
   });
 
 </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f96259daf9054ee3b27a3da48738f75e"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
