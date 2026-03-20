@@ -1779,6 +1779,10 @@
     border-bottom-color: #2a2a2a;
   }
 
+  body.dark-mode nav .nav-links a { color: #aaa; }
+  body.dark-mode nav .nav-links a:hover { color: #f0efe9; }
+  body.dark-mode .dark-toggle { color: #aaa; border-color: #2a2a2a; }
+
   body.dark-mode .section:nth-child(even) { background: #161616; }
   body.dark-mode .section:nth-child(odd) { background: #111111; }
   body.dark-mode .term-card, body.dark-mode .money-card,
@@ -1790,22 +1794,71 @@
   body.dark-mode .term-def, body.dark-mode .money-card p,
   body.dark-mode .mistake-desc, body.dark-mode .step-card-desc,
   body.dark-mode .risk-item-desc, body.dark-mode .faq-answer p,
-  body.dark-mode .market-step-content span { color: #888; }
-  body.dark-mode .hero::before { opacity: 0.15; }
-  body.dark-mode .hero-headline { color: #f0efe9; }
+  body.dark-mode .market-step-content span { color: #aaaaaa; }
+  body.dark-mode .term-name, body.dark-mode .money-card-title,
+  body.dark-mode .mistake-title, body.dark-mode .step-card-title,
+  body.dark-mode .risk-item-title, body.dark-mode .faq-q,
+  body.dark-mode .market-step-content strong { color: #f0efe9; }
+  body.dark-mode .section-label { color: #888; }
   body.dark-mode .section-title { color: #f0efe9; }
+  body.dark-mode .hero-headline { color: #f0efe9; }
+  body.dark-mode .hero-sub { color: #888; }
+  body.dark-mode .hero-tag { color: #888; }
+  body.dark-mode p { color: #aaa; }
+  body.dark-mode strong { color: #f0efe9; }
   body.dark-mode .stats-bar { background: #161616; border-color: #2a2a2a; }
+  body.dark-mode .stats-bar-label { color: #666; }
   body.dark-mode .stats-bar-sub { color: #666; }
-  body.dark-mode .geo-divider canvas { opacity: 0.3; }
+  body.dark-mode .stats-bar-item { border-color: #2a2a2a; }
+  body.dark-mode .geo-divider canvas { opacity: 0.2; }
   body.dark-mode .calc-result { background: #1a1a1a; border: 1px solid #2a2a2a; }
-  body.dark-mode .faq-q { color: #ccc; }
+  body.dark-mode .calc-field label { color: #888; }
+  body.dark-mode .calc-field-val { color: #f0efe9; }
+  body.dark-mode .faq-q { color: #e0e0e0; }
   body.dark-mode .footer-full { background: #0a0a0a; }
+  body.dark-mode .visual-card { background: #1a1a1a; }
+  body.dark-mode .money-example { background: #222; border-left-color: var(--gold); color: #aaa; }
+  body.dark-mode .helpful-bar { background: #1a1a1a; }
+  body.dark-mode .helpful-label { color: #aaa; }
+  body.dark-mode .share-btn { color: #aaa; border-color: #2a2a2a; }
+  body.dark-mode .advanced-card-body p { color: #aaa; }
+  body.dark-mode .advanced-card-title { color: #f0efe9; }
+  body.dark-mode .term-number { color: var(--gold); }
+  body.dark-mode .expand-content { background: #222; }
+  body.dark-mode .expand-content p { color: #aaa; }
+  body.dark-mode .search-box { background: #1a1a1a; }
+  body.dark-mode .search-input { color: #f0efe9; background: transparent; }
+  body.dark-mode .search-result-title { color: #f0efe9; }
+  body.dark-mode .search-result-item:hover { background: #222; }
+  body.dark-mode .search-input-wrap { border-color: #2a2a2a; }
+  body.dark-mode .tts-widget .tts-panel { background: #1a1a1a; }
+
+  /* PRINT STYLES — force dark text on white */
+  @media print {
+    * {
+      color: #000 !important;
+      background: #fff !important;
+      border-color: #ddd !important;
+    }
+    body { font-size: 11pt; line-height: 1.6; }
+    nav, .tts-widget, .print-btn, .dark-toggle,
+    .progress-bar, .search-overlay, .cursor,
+    .cursor-ring, .geo-divider, .share-bar,
+    .helpful-bar, .game-layout, .portfolio-layout,
+    .quiz-layout, .calc-layout { display: none !important; }
+    .section, .interactive-section { page-break-inside: avoid; padding: 1rem 0; }
+    .section-title, .term-name, .money-card-title,
+    .mistake-title, .step-card-title { color: #000 !important; }
+    .term-def, .money-card p, .mistake-desc,
+    .step-card-desc, .faq-answer p { color: #333 !important; }
+    .visual-card { background: #f5f5f5 !important; color: #000 !important; }
+    .visual-card-quote { color: #000 !important; }
+    canvas { display: none !important; }
+    a { text-decoration: none; color: #000 !important; }
+    .footer-full { background: #fff !important; color: #000 !important; }
+  }
 
   .dark-toggle {
-    position: fixed;
-    top: 1.1rem;
-    right: 8rem;
-    z-index: 200;
     background: transparent;
     border: 1px solid var(--border);
     border-radius: 20px;
@@ -2029,13 +2082,8 @@
 
   .print-btn:hover { border-color: var(--gold); color: var(--gold); }
 
-  @media print {
-    nav, .tts-widget, .print-btn, .dark-toggle, .progress-bar, .search-overlay, .cursor, .cursor-ring { display: none !important; }
-    .section, .interactive-section { page-break-inside: avoid; }
-  }
-
   @media (max-width: 768px) {
-    .dark-toggle { right: 5rem; font-size: 0; gap: 0; padding: 6px 8px; }
+    .dark-toggle { font-size: 0; gap: 0; padding: 6px 8px; }
     .print-btn { bottom: 5rem; right: 1rem; }
   }
 </style>
@@ -2044,9 +2092,6 @@
 
 <!-- Progress bar -->
 <div class="progress-bar" id="progressBar"></div>
-
-<!-- Dark mode toggle -->
-<button class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()">◐ Dark</button>
 
 <!-- Search overlay -->
 <div class="search-overlay" id="searchOverlay" onclick="closeSearch(event)">
@@ -2101,7 +2146,10 @@
     <li><a href="#faq">FAQ</a></li>
     <li><a href="#tools">Tools</a></li>
   </ul>
-  <a href="#" class="nav-cta" onclick="openSearch(event)">⌕ Search</a>
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <button class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()">◐ Dark</button>
+    <a href="#" class="nav-cta" onclick="openSearch(event)">⌕ Search</a>
+  </div>
 </nav>
 
 <!-- HERO -->
