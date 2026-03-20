@@ -3286,13 +3286,6 @@
   if (window.speechSynthesis) {
     window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
   }
-  function drawAllCharts() {
-    drawBullBear();
-    drawCandlestick();
-    drawVolume();
-    drawOrders();
-  }
-
   function setupCanvas(id, aspectRatio) {
     const canvas = document.getElementById(id);
     if (!canvas) return null;
@@ -3609,8 +3602,69 @@
     ctx.fillText('Time →', pad.l+cw/2, pad.t+ch+H*0.09);
   }
 
-  drawAllCharts();
-  window.addEventListener('resize', drawAllCharts);
+  // ── PERFORMANCE OPTIMIZATIONS ──
+
+  // Debounce utility
+  function debounce(fn, delay) {
+    let timer;
+    return function(...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+
+  // Wrap drawAllCharts with requestAnimationFrame
+  function drawAllCharts() {
+    requestAnimationFrame(() => {
+      drawBullBear();
+      drawCandlestick();
+      drawVolume();
+      drawOrders();
+    });
+  }
+
+  // Debounced resize — prevents redrawing 60 times per second on resize
+  window.addEventListener('resize', debounce(drawAllCharts, 250));
+
+  // Lazy load charts — only draw when scrolled into view
+  const chartObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        requestAnimationFrame(() => {
+          if (id === 'bullBearChart') drawBullBear();
+          if (id === 'candlestickChart') drawCandlestick();
+          if (id === 'volumeChart') drawVolume();
+          if (id === 'orderChart') drawOrders();
+        });
+        chartObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  ['bullBearChart','candlestickChart','volumeChart','orderChart'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) chartObserver.observe(el);
+  });
+
+  // Debounced slider handlers — prevents recalculating on every pixel of slider movement
+  const debouncedCalc = debounce(updateCalc, 60);
+  const debouncedPortfolio = debounce(updatePortfolio, 60);
+
+  document.querySelectorAll('#calcAmount, #calcRate, #calcYears, #calcMonthly').forEach(el => {
+    el.oninput = null;
+    el.addEventListener('input', debouncedCalc);
+  });
+
+  document.querySelectorAll('#assetSliders input[type="range"]').forEach(el => {
+    el.oninput = null;
+    el.addEventListener('input', debouncedPortfolio);
+  });
+
+  // Initialize defaults — moved to after all functions are defined
+  // updateCalc() and updatePortfolio() called at bottom of script
+
+  // ── COMPOUND INTEREST CALCULATOR ──
   function updateCalc() {
     const amount = +document.getElementById('calcAmount').value;
     const rate = +document.getElementById('calcRate').value / 100;
@@ -3636,7 +3690,6 @@
     document.getElementById('calcGrowth').textContent = '$' + Math.round(growth).toLocaleString();
     document.getElementById('calcMultiplier').textContent = (value / amount).toFixed(1) + 'x';
   }
-  updateCalc();
 
   // ── PORTFOLIO BUILDER ──
   const assetColors = ['#0a0a0a', '#555', '#999', '#ccc', '#e0e0d8'];
@@ -3704,7 +3757,6 @@
       </div>
     `).join('');
   }
-  updatePortfolio();
 
   // ── RISK TOLERANCE QUIZ ──
   const quizQuestions = [
@@ -3964,6 +4016,11 @@
   }
 
   restartGame();
+
+  // ── INITIALIZE ALL ──
+  // Called here so all variables and functions are defined first
+  updateCalc();
+  updatePortfolio();
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
