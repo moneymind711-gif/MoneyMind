@@ -1,0 +1,3934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoneyMind</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f5f0;
+    --grey: #888888;
+    --light: #e8e8e3;
+    --border: #d0d0c8;
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --gold-dim: rgba(201,168,76,0.12);
+    --gold-border: rgba(201,168,76,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--white);
+    color: var(--black);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 10px;
+    height: 10px;
+    background: var(--black);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--black);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.12s ease;
+    transform: translate(-50%, -50%);
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(245,245,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.08em;
+    color: var(--black);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 400;
+  }
+
+  .nav-links a:hover { color: var(--black); }
+
+  .nav-cta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1.2rem;
+    border: 1px solid var(--gold);
+    background: var(--gold);
+    color: var(--black);
+    text-decoration: none;
+    transition: all 0.2s;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+
+  .nav-cta:hover {
+    background: transparent;
+    color: var(--gold);
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle grid background */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-tag,
+  .hero-headline,
+  .hero-sub,
+  .hero-actions {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 12vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--black);
+    margin-bottom: 1rem;
+  }
+
+  .hero-headline em {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 800;
+    font-size: 0.85em;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--grey);
+    font-weight: 300;
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    padding: 0.9rem 2.2rem;
+    background: var(--black);
+    color: var(--white);
+    text-decoration: none;
+    border: 1px solid var(--black);
+    transition: all 0.25s;
+    border-radius: 2px;
+  }
+
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--black);
+  }
+
+  .btn-ghost {
+    font-size: 0.78rem;
+    color: var(--grey);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    letter-spacing: 0.03em;
+  }
+
+  .btn-ghost:hover { color: var(--black); }
+
+  .btn-ghost::after {
+    content: '→';
+    transition: transform 0.2s;
+  }
+
+  .btn-ghost:hover::after { transform: translateX(4px); }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stats-bar-item {
+    flex: 1;
+    padding: 1.8rem 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .stats-bar-item:last-child { border-right: none; }
+
+  .stats-bar-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    letter-spacing: 0.03em;
+    color: var(--gold);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .stats-bar-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .stats-bar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey);
+  }
+
+  .stats-bar-sub {
+    font-size: 0.72rem;
+    color: #555;
+    font-weight: 300;
+  }
+
+  /* SECTION: What is Investing */
+  .section {
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin-bottom: 3rem;
+    color: var(--black);
+  }
+
+  .section-title em {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 800;
+    color: var(--gold);
+  }
+
+  /* Content block with expandable */
+  .content-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    border-top: 1px solid var(--border);
+    padding-top: 3rem;
+  }
+
+  .content-text p {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: #333;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Expandable advanced section */
+  .expandable {
+    margin-top: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .expand-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--black);
+    transition: background 0.2s;
+  }
+
+  .expand-btn:hover { background: var(--light); }
+
+  .expand-icon {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+    font-style: normal;
+  }
+
+  .expand-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 1.2rem;
+    background: #f0f0eb;
+    border-top: 0px solid var(--border);
+  }
+
+  .expand-content.open {
+    max-height: 400px;
+    padding: 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .expand-icon.open { transform: rotate(45deg); }
+
+  .expand-content p {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: #444;
+    font-weight: 300;
+  }
+
+  .expand-content p + p { margin-top: 0.75rem; }
+
+  /* Right side visual */
+  .content-visual {
+    position: sticky;
+    top: 6rem;
+  }
+
+  .visual-card {
+    background: var(--black);
+    color: var(--white);
+    padding: 2.5rem;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-card::before {
+    content: '"';
+    position: absolute;
+    top: -1rem;
+    right: 1.5rem;
+    font-family: 'Barlow', sans-serif;
+    font-size: 10rem;
+    color: rgba(201,168,76,0.15);
+    line-height: 1;
+  }
+
+  .visual-card-quote {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .visual-card-author {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .visual-divider {
+    height: 1px;
+    background: rgba(201,168,76,0.2);
+    margin: 1.5rem 0;
+  }
+
+  .visual-fact {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .visual-fact-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--gold);
+    line-height: 1;
+    min-width: 60px;
+  }
+
+  .visual-fact-text {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    padding-top: 0.3rem;
+  }
+
+  /* KEY TERMS GRID */
+  .terms-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 3rem;
+  }
+
+  .term-card {
+    background: var(--white);
+    padding: 1.8rem;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .term-card:hover { background: var(--light); }
+
+  .term-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 1.8rem;
+    right: 1.8rem;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .term-card:hover::after { transform: scaleX(1); }
+
+  .term-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--grey);
+    margin-bottom: 0.75rem;
+  }
+
+  .term-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    color: var(--black);
+    margin-bottom: 0.6rem;
+    line-height: 1;
+  }
+
+  .term-def {
+    font-size: 0.82rem;
+    color: #444;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .term-expandable {
+    margin-top: 0.8rem;
+  }
+
+  .term-expand-btn {
+    background: none;
+    border: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0;
+    transition: color 0.2s;
+  }
+
+  .term-expand-btn:hover { color: var(--black); }
+
+  .term-expand-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .term-expand-content.open { max-height: 200px; }
+
+  .term-expand-content p {
+    font-size: 0.75rem;
+    color: #666;
+    line-height: 1.7;
+    margin-top: 0.6rem;
+    font-weight: 300;
+    
+    border-left: 2px solid var(--border);
+    padding-left: 0.75rem;
+  }
+
+  /* HOW THE MARKET WORKS */
+  .market-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    border-top: 1px solid var(--border);
+    padding-top: 3rem;
+    margin-top: 3rem;
+  }
+
+  .market-text p {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: #333;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+  }
+
+  .market-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .market-step {
+    display: flex;
+    gap: 1.2rem;
+    padding: 1.4rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+    transition: background 0.2s;
+  }
+
+  .market-step:last-child { border-bottom: none; }
+  .market-step:hover { background: var(--light); }
+
+  .market-step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--border);
+    line-height: 1;
+    min-width: 28px;
+  }
+
+  .market-step-content strong {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--black);
+    display: block;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  .market-step-content span {
+    font-size: 0.78rem;
+    color: var(--grey);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* HOW TO MAKE MONEY */
+  .money-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    border-top: 1px solid var(--border);
+    padding-top: 3rem;
+  }
+
+  .money-card {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .money-card:hover { border-color: var(--black); }
+
+  .money-card-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 0.75rem;
+  }
+
+  .money-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.03em;
+    color: var(--black);
+    margin-bottom: 0.8rem;
+    line-height: 1;
+  }
+
+  .money-card p {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: #444;
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+
+  .money-example {
+    background: var(--light);
+    border-left: 3px solid var(--black);
+    padding: 0.9rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: #333;
+    line-height: 1.6;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .money-wide {
+    grid-column: 1 / -1;
+    background: var(--black);
+    color: var(--white);
+    padding: 2rem;
+    border-radius: 3px;
+  }
+
+  .money-wide-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+  }
+
+  .money-wide p {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+    max-width: 700px;
+  }
+
+  .gains-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.2rem;
+  }
+
+  .gain-box {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2px;
+    padding: 1rem 1.2rem;
+  }
+
+  .gain-box-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 0.3rem;
+  }
+
+  .gain-box-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--white);
+  }
+
+  .gain-box-desc {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.2rem;
+    line-height: 1.5;
+  }
+
+  /* RISK MANAGEMENT */
+  .risk-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    border-top: 1px solid var(--border);
+    padding-top: 3rem;
+    margin-top: 3rem;
+    align-items: start;
+  }
+
+  .risk-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .risk-item {
+    border: 1px solid var(--border);
+    border-bottom: none;
+    padding: 1.4rem 1.5rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .risk-item:first-child { border-radius: 3px 3px 0 0; }
+  .risk-item:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 3px 3px; }
+  .risk-item:hover { background: var(--light); }
+
+  .risk-icon {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--border);
+    min-width: 24px;
+    margin-top: 1px;
+    letter-spacing: 0.05em;
+  }
+
+  .risk-item-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--black);
+    margin-bottom: 0.3rem;
+  }
+
+  .risk-item-desc {
+    font-size: 0.78rem;
+    color: var(--grey);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .risk-tip-card {
+    background: var(--black);
+    color: var(--white);
+    padding: 2rem;
+    border-radius: 3px;
+    position: sticky;
+    top: 6rem;
+  }
+
+  .risk-tip-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 1rem;
+  }
+
+  .risk-tip-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+    line-height: 1;
+  }
+
+  .risk-tip-card p {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.8;
+    font-weight: 300;
+    margin-bottom: 1.2rem;
+  }
+
+  .diversify-bar {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .div-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .div-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.35);
+    min-width: 60px;
+    text-transform: uppercase;
+  }
+
+  .div-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .div-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  /* GET STARTED */
+  .steps-layout {
+    margin-top: 3rem;
+    border-top: 1px solid var(--border);
+    padding-top: 3rem;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .step-card {
+    background: var(--white);
+    padding: 1.8rem 1.5rem;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .step-card:hover { background: var(--light); }
+
+  .step-card-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-card-title {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+  }
+
+  .step-card-desc {
+    font-size: 0.78rem;
+    color: var(--grey);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .started-cta {
+    background: var(--black);
+    color: var(--white);
+    padding: 2.5rem 3rem;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .started-cta-text h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.4rem;
+  }
+
+  .started-cta-text p {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  .brokers-list {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .broker-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 2px;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .broker-tag:hover {
+    border-color: var(--white);
+    color: var(--white);
+  }
+
+  /* INTERACTIVES SHARED */
+  .interactive-section {
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .interactive-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* COMPOUND INTEREST CALCULATOR */
+  .calc-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    border-top: 1px solid var(--border);
+    padding-top: 3rem;
+    margin-top: 1.5rem;
+    align-items: start;
+  }
+
+  .calc-inputs { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .calc-field label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .calc-field input[type="range"] { width: 100%; accent-color: var(--black); height: 2px; cursor: pointer; }
+
+  .calc-field-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+
+  .calc-field-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--black);
+    letter-spacing: 0.03em;
+  }
+
+  .calc-result {
+    background: var(--black);
+    color: var(--white);
+    padding: 2rem;
+    border-radius: 3px;
+    position: sticky;
+    top: 6rem;
+  }
+
+  .calc-result-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 0.4rem;
+  }
+
+  .calc-result-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .calc-result-sub { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 1.5rem; font-weight: 300; }
+
+  .calc-breakdown { display: flex; flex-direction: column; gap: 0.6rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.2rem; }
+
+  .calc-breakdown-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+
+  .calc-breakdown-row span:last-child { color: var(--white); font-family: 'DM Mono', monospace; }
+
+  /* PORTFOLIO BUILDER */
+  .portfolio-layout { border-top: 1px solid var(--border); padding-top: 3rem; margin-top: 1.5rem; }
+
+  .portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+
+  .portfolio-assets { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .asset-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    transition: border-color 0.2s;
+  }
+
+  .asset-row:hover { border-color: var(--black); }
+
+  .asset-color { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  .asset-name { font-size: 0.82rem; font-weight: 400; color: var(--black); flex: 1; }
+
+  .asset-row input[type="range"] { width: 110px; accent-color: var(--black); cursor: pointer; }
+
+  .asset-pct { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--black); min-width: 36px; text-align: right; }
+
+  .portfolio-visual { position: sticky; top: 6rem; }
+
+  .portfolio-donut-wrap { background: var(--black); border-radius: 3px; padding: 2rem; }
+
+  .portfolio-donut-title { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 1.2rem; }
+
+  .portfolio-total { margin-top: 1rem; text-align: center; font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; }
+  .portfolio-total.ok { color: #4ade80; }
+  .portfolio-total.over { color: #f87171; }
+
+  .portfolio-legend { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.2rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem; }
+
+  .portfolio-legend-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+
+  .portfolio-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .portfolio-legend-row span:last-child { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 0.68rem; color: rgba(255,255,255,0.8); }
+
+  /* RISK QUIZ */
+  .quiz-layout { border-top: 1px solid var(--border); padding-top: 3rem; margin-top: 1.5rem; max-width: 700px; }
+
+  .quiz-progress { display: flex; gap: 4px; margin-bottom: 2rem; }
+
+  .quiz-progress-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; transition: background 0.3s; }
+
+  .quiz-progress-bar.active { background: var(--black); }
+
+  .quiz-question { font-family: 'Barlow', sans-serif; font-size: 1.4rem; line-height: 1.5; color: var(--black); margin-bottom: 1.5rem;  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+
+  .quiz-option {
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: #333;
+    font-weight: 300;
+    transition: all 0.2s;
+    background: var(--white);
+    text-align: left;
+    width: 100%;
+  }
+
+  .quiz-option:hover { border-color: var(--black); background: var(--light); }
+  .quiz-option.selected { border-color: var(--black); background: var(--black); color: var(--white); }
+
+  .quiz-nav { display: flex; gap: 1rem; align-items: center; }
+
+  .quiz-counter { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--grey); margin-left: auto; }
+
+  .quiz-result { display: none; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+  .quiz-result.show { display: block; }
+
+  .quiz-result-header { background: var(--black); color: var(--white); padding: 2rem; }
+
+  .quiz-result-type { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.03em; line-height: 1; margin-bottom: 0.4rem; }
+
+  .quiz-result-desc { font-size: 0.85rem; color: rgba(255,255,255,0.55); font-weight: 300; line-height: 1.7; }
+
+  .quiz-result-body { padding: 1.5rem 2rem; background: var(--white); }
+
+  .quiz-result-recs { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .quiz-result-rec { font-size: 0.82rem; color: #333; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-weight: 300; display: flex; gap: 0.6rem; }
+
+  .quiz-result-rec::before { content: '→'; color: var(--grey); flex-shrink: 0; }
+
+  /* MARKET GAME */
+  .game-layout { border-top: 1px solid var(--border); padding-top: 3rem; margin-top: 1.5rem; }
+
+  .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+
+  .game-stats-bar { display: flex; gap: 1.5rem; }
+
+  .game-stat { text-align: center; }
+
+  .game-stat-label { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey); margin-bottom: 0.2rem; }
+
+  .game-stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.03em; color: var(--black); }
+  .game-stat-value.up { color: #16a34a; }
+  .game-stat-value.down { color: #dc2626; }
+
+  .game-scenario { border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 1.5rem; }
+
+  .game-scenario-header { background: var(--black); color: var(--white); padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-left: 3px solid var(--gold); }
+
+  .game-round { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+
+  .game-scenario-text { padding: 1.5rem; font-size: 1rem; line-height: 1.7; color: #333; font-weight: 300; font-family: 'Barlow', sans-serif;  border-bottom: 1px solid var(--border); }
+
+  .game-choices { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); }
+
+  .game-choice { background: var(--white); padding: 1.2rem 1.5rem; cursor: pointer; transition: background 0.2s; border: none; text-align: left; width: 100%; }
+
+  .game-choice:hover { background: var(--light); }
+  .game-choice.correct { background: #dcfce7; }
+  .game-choice.wrong { background: #fee2e2; }
+
+  .game-choice-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey); margin-bottom: 0.3rem; }
+
+  .game-choice-text { font-size: 0.85rem; color: var(--black); font-weight: 400; line-height: 1.4; }
+
+  .game-feedback { padding: 1rem 1.5rem; font-size: 0.82rem; line-height: 1.6; font-weight: 300; display: none; border-top: 1px solid var(--border); }
+  .game-feedback.show { display: block; }
+  .game-feedback.correct-fb { color: #16a34a; background: #f0fdf4; }
+  .game-feedback.wrong-fb { color: #dc2626; background: #fef2f2; }
+
+  .game-next { display: none; }
+  .game-next.show { display: inline-flex; }
+
+  /* ADVANCED TOPICS */
+  .advanced-intro {
+    background: var(--black);
+    color: var(--white);
+    padding: 3rem;
+    border-radius: 3px;
+    margin-top: 3rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .advanced-intro-warning {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+    min-width: 60px;
+    color: rgba(255,255,255,0.2);
+  }
+
+  .advanced-intro-text h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.5rem;
+  }
+
+  .advanced-intro-text p {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .advanced-topics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .advanced-card {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .advanced-card:hover { border-color: var(--black); }
+
+  .advanced-card-header {
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .advanced-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.03em;
+    color: var(--black);
+    line-height: 1;
+  }
+
+  .risk-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .risk-badge.low { background: #dcfce7; color: #16a34a; }
+  .risk-badge.medium { background: #fef9c3; color: #ca8a04; }
+  .risk-badge.high { background: #fee2e2; color: #dc2626; }
+  .risk-badge.very-high { background: #dc2626; color: #fff; }
+
+  .advanced-card-body {
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .advanced-card-body p {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: #444;
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+
+  .advanced-warning {
+    display: flex;
+    gap: 0.6rem;
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    font-size: 0.78rem;
+    color: #dc2626;
+    line-height: 1.5;
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+
+  .advanced-warning::before {
+    content: '!';
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: -1px;
+  }
+
+  .advanced-tip {
+    display: flex;
+    gap: 0.6rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    font-size: 0.78rem;
+    color: #16a34a;
+    line-height: 1.5;
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+
+  .advanced-tip::before {
+    content: '→';
+    flex-shrink: 0;
+  }
+
+  .advanced-stat-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .advanced-stat {
+    flex: 1;
+    background: var(--light);
+    border-radius: 2px;
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .advanced-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--black);
+    line-height: 1;
+  }
+
+  .advanced-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-top: 0.2rem;
+  }
+
+  .advanced-expand-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    border-top: 1px solid var(--border);
+    padding: 0.75rem 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grey);
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .advanced-expand-btn:hover { background: var(--light); color: var(--black); }
+
+  .advanced-expand-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    background: #f8f8f5;
+    border-top: 0px solid var(--border);
+  }
+
+  .advanced-expand-content.open {
+    max-height: 400px;
+    border-top: 1px solid var(--border);
+  }
+
+  .advanced-expand-content p {
+    font-size: 0.8rem;
+    line-height: 1.75;
+    color: #555;
+    font-weight: 300;
+    padding: 1rem 1.5rem;
+    margin: 0;
+    
+  }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+
+
+  /* Footer strip */
+  .footer-strip {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4rem;
+  }
+
+  .footer-strip-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--black);
+  }
+
+  .footer-strip-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--grey);
+  }
+
+  .footer-strip-disclaimer {
+    font-size: 0.65rem;
+    color: var(--grey);
+    max-width: 300px;
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  /* FAQ */
+  .faq-layout { margin-top:3rem; border-top:1px solid var(--border); padding-top:3rem; max-width:800px; }
+  .faq-item { border-bottom:1px solid var(--border); }
+  .faq-btn { width:100%; display:flex; justify-content:space-between; align-items:center; padding:1.2rem 0; background:none; border:none; cursor:pointer; text-align:left; gap:1rem; }
+  .faq-q { font-size:0.95rem; font-weight:400; color:#333; line-height:1.5; flex:1; transition:color 0.2s; }
+  .faq-btn:hover .faq-q { color:var(--black); }
+  .faq-icon { font-family:'DM Mono',monospace; font-size:1.2rem; color:var(--grey); flex-shrink:0; transition:transform 0.3s; display:inline-block; }
+  .faq-icon.open { transform:rotate(45deg); }
+  .faq-answer { max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+  .faq-answer.open { max-height:300px; }
+  .faq-answer p { font-size:0.85rem; color:#555; line-height:1.8; font-weight:300; padding-bottom:1.2rem; }
+
+  /* COMMON MISTAKES */
+  .mistakes-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:3rem; border-top:1px solid var(--border); padding-top:3rem; }
+  .mistake-card { border:1px solid var(--border); border-radius:3px; padding:1.5rem; position:relative; overflow:hidden; transition:border-color 0.2s; }
+  .mistake-card:hover { border-color:var(--black); }
+  .mistake-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--gold); }
+  .mistake-num { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--grey); margin-bottom:0.4rem; }
+  .mistake-title { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.03em; color:var(--black); margin-bottom:0.6rem; line-height:1; }
+  .mistake-desc { font-size:0.82rem; color:#444; line-height:1.75; font-weight:300; margin-bottom:0.8rem; }
+  .mistake-fix { font-size:0.78rem; color:#333; font-weight:400; display:flex; gap:0.5rem; align-items:flex-start; }
+  .mistake-fix::before { content:'Fix:'; font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--grey); flex-shrink:0; margin-top:2px; }
+
+  /* FULL FOOTER */
+  .footer-full { background:var(--black); color:var(--white); margin-top:4rem; border-top: 3px solid var(--gold); }
+  .footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; padding:3rem 3rem 2rem; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .footer-brand-name { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.08em; margin-bottom:0.5rem; color: var(--gold); }
+  .footer-brand-desc { font-size:0.8rem; color:rgba(255,255,255,0.4); font-weight:300; line-height:1.7; max-width:240px; margin-bottom:1rem; }
+  .footer-col-title { font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:1rem; }
+  .footer-links { display:flex; flex-direction:column; gap:0.5rem; }
+  .footer-links a { font-size:0.8rem; color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.2s; font-weight:300; }
+  .footer-links a:hover { color:var(--white); }
+  .footer-bottom { display:flex; justify-content:space-between; align-items:center; padding:1.2rem 3rem; flex-wrap:wrap; gap:1rem; }
+  .footer-bottom-left { font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.06em; color:rgba(255,255,255,0.25); }
+  .footer-bottom-right { font-size:0.7rem; color:rgba(255,255,255,0.25); max-width:400px; text-align:right; line-height:1.5; }
+
+  /* MOBILE RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding:1rem 1.2rem; }
+    .nav-links { display:none; }
+    .nav-cta { display:none; }
+    .hero { padding:6rem 1.2rem 2rem; }
+    .hero-headline { font-size:clamp(3.5rem,15vw,6rem); }
+    .stats-bar { flex-direction:column; }
+    .stats-bar-item { border-right:none; border-bottom:1px solid var(--border); padding:1.2rem 1.5rem; }
+    .stats-bar-item:last-child { border-bottom:none; }
+    .section { padding:3rem 1.2rem; }
+    .interactive-section { padding:3rem 1.2rem; }
+    .content-block { grid-template-columns:1fr; gap:2rem; }
+    .terms-grid { grid-template-columns:1fr; }
+    .market-layout { grid-template-columns:1fr; gap:2rem; }
+    .money-grid { grid-template-columns:1fr; }
+    .money-wide { grid-column:1; }
+    .gains-row { flex-direction:column; }
+    .risk-layout { grid-template-columns:1fr; gap:2rem; }
+    .steps-grid { grid-template-columns:1fr 1fr; }
+    .advanced-topics-grid { grid-template-columns:1fr; }
+    .calc-layout { grid-template-columns:1fr; }
+    .portfolio-grid { grid-template-columns:1fr; }
+    .mistakes-grid { grid-template-columns:1fr; }
+    .footer-top { grid-template-columns:1fr 1fr; gap:2rem; padding:2rem 1.2rem; }
+    .footer-bottom { padding:1rem 1.2rem; flex-direction:column; align-items:flex-start; }
+    .footer-bottom-right { text-align:left; max-width:100%; }
+    .started-cta { flex-direction:column; padding:1.5rem; }
+    .game-choices { grid-template-columns:1fr; }
+    .advanced-intro { flex-direction:column; gap:1rem; }
+    .asset-row input[type="range"] { width:80px; }
+    .brokers-list { justify-content:flex-start; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-headline { font-size:clamp(3rem,18vw,4.5rem); }
+    .section-title { font-size:clamp(2rem,8vw,3rem); }
+    .steps-grid { grid-template-columns:1fr; }
+    .footer-top { grid-template-columns:1fr; }
+    .calc-result-value { font-size:2.5rem; }
+    .game-stats-bar { gap:0.8rem; }
+  }
+
+  /* TEXT TO SPEECH */
+  .tts-widget {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+
+  .tts-panel {
+    background: var(--black);
+    color: var(--white);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    min-width: 220px;
+    display: none;
+    flex-direction: column;
+    gap: 0.8rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .tts-panel.open { display: flex; }
+
+  .tts-panel-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.2rem;
+  }
+
+  .tts-controls { display: flex; gap: 0.5rem; }
+
+  .tts-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: var(--white);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .tts-btn:hover { background: rgba(255,255,255,0.12); border-color: var(--gold); }
+  .tts-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); font-weight: 600; }
+
+  .tts-speed { display: flex; align-items: center; gap: 0.6rem; }
+
+  .tts-speed label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    white-space: nowrap;
+  }
+
+  .tts-speed input[type="range"] { flex: 1; accent-color: var(--gold); cursor: pointer; }
+
+  .tts-speed-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    min-width: 28px;
+    text-align: right;
+  }
+
+  .tts-status {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    font-weight: 300;
+    min-height: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tts-toggle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--black);
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+  }
+
+  .tts-toggle:hover { background: var(--gold); color: var(--black); transform: scale(1.05); }
+  .tts-toggle.speaking { background: var(--gold); color: var(--black); }
+
+  @keyframes tts-pulse {
+    0%, 100% { box-shadow: 0 4px 16px rgba(201,168,76,0.3); }
+    50% { box-shadow: 0 4px 28px rgba(201,168,76,0.8); }
+  }
+
+  .tts-toggle.speaking { animation: tts-pulse 1.5s infinite; }
+
+  @media (max-width: 768px) {
+    .tts-widget { bottom: 1rem; right: 1rem; }
+    .tts-panel { min-width: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- TEXT TO SPEECH WIDGET -->
+<div class="tts-widget">
+  <div class="tts-panel" id="ttsPanel">
+    <div class="tts-panel-title">Read Aloud</div>
+    <div class="tts-status" id="ttsStatus">Click Play to start reading</div>
+    <div class="tts-controls">
+      <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+      <button class="tts-btn" id="ttsPause" onclick="ttsPause()">⏸ Pause</button>
+      <button class="tts-btn" id="ttsStop" onclick="ttsStop()">■ Stop</button>
+    </div>
+    <div class="tts-speed">
+      <label>Speed</label>
+      <input type="range" id="ttsSpeedSlider" min="0.5" max="2" step="0.1" value="1" oninput="ttsUpdateSpeed()">
+      <span class="tts-speed-val" id="ttsSpeedVal">1.0x</span>
+    </div>
+  </div>
+  <button class="tts-toggle" id="ttsToggle" onclick="ttsTogglePanel()" title="Read page aloud">🔊</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Money<span>Mind</span></a>
+  <ul class="nav-links">
+    <li><a href="#investing">Investing</a></li>
+    <li><a href="#terms">Key Terms</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#navigating">Navigating</a></li>
+    <li><a href="#risk">Risk</a></li>
+    <li><a href="#advanced">Advanced</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#tools">Tools</a></li>
+  </ul>
+  <a href="#" class="nav-cta">Start Learning</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Financial Education for Everyone</div>
+  <h1 class="hero-headline">Learn to<br><em>Invest</em></h1>
+  <p class="hero-sub">The stock market doesn't have to be intimidating. Learn how it works, how to grow your money, and how to start investing — all in plain English.</p>
+  <div class="hero-actions">
+    <a href="#investing" class="btn-primary">Start from the Basics</a>
+    <a href="#" class="btn-ghost">Advanced Topics</a>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-bar-item">
+    <div class="stats-bar-value">10%</div>
+    <div class="stats-bar-text">
+      <div class="stats-bar-label">S&P 500 Avg. Return</div>
+      <div class="stats-bar-sub">Per year historically</div>
+    </div>
+  </div>
+  <div class="stats-bar-item">
+    <div class="stats-bar-value">$174k</div>
+    <div class="stats-bar-text">
+      <div class="stats-bar-label">$10k invested for 30 years</div>
+      <div class="stats-bar-sub">At 10% annual return</div>
+    </div>
+  </div>
+  <div class="stats-bar-item">
+    <div class="stats-bar-value">NOW</div>
+    <div class="stats-bar-text">
+      <div class="stats-bar-label">Best time to invest</div>
+      <div class="stats-bar-sub">Time is your biggest asset</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT IS INVESTING SECTION -->
+<div class="section" id="investing">
+  <div class="section-label">Chapter 01</div>
+  <h2 class="section-title">What is <em>Investing?</em></h2>
+
+  <div class="content-block">
+    <div class="content-text">
+      <p>Investing is putting your money into something — like a company or a fund — with the goal of growing it over time. The idea is that what you invest in becomes more valuable, so when you sell it down the road, you walk away with more than you put in.</p>
+      <p>Think of it this way: <strong>saving</strong> is keeping your money safe. <strong>Investing</strong> is putting it to work. Instead of sitting in an account doing nothing, your money has the potential to grow on its own. That said, nothing is ever guaranteed — there's always some level of risk involved.</p>
+
+      <!-- Expandable advanced section -->
+      <div class="expandable">
+        <button class="expand-btn" onclick="toggleExpand(this)">
+          <span>↗ Go Deeper — Advanced Explanation</span>
+          <em class="expand-icon">+</em>
+        </button>
+        <div class="expand-content">
+          <p>At a more advanced level, investing is the allocation of capital into assets with the expectation of generating a risk-adjusted return over time. Every investment involves a tradeoff between risk and reward — generally the higher the potential return, the higher the risk you take on.</p>
+          <p>Investors evaluate opportunities using metrics like expected return, standard deviation, Sharpe ratio, and correlation to build portfolios that maximize return for a given level of risk — a concept known as Modern Portfolio Theory (MPT), developed by Harry Markowitz in 1952.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-visual">
+      <div class="visual-card">
+        <p class="visual-card-quote">"The stock market is a device for transferring money from the impatient to the patient."</p>
+        <div class="visual-card-author">— Warren Buffett</div>
+        <div class="visual-divider"></div>
+        <div class="visual-fact">
+          <div class="visual-fact-num">93%</div>
+          <div class="visual-fact-text">of actively managed funds underperform the market over a 20 year period — reinforcing why patience and consistency wins.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KEY TERMS SECTION -->
+<hr class="section-divider">
+<div class="section" id="terms">
+  <div class="section-label">Chapter 02</div>
+  <h2 class="section-title">Key <em>Terms</em></h2>
+
+  <div class="terms-grid">
+
+    <div class="term-card">
+      <div class="term-number">01</div>
+      <div class="term-name">Stock</div>
+      <div class="term-def">A small piece of ownership in a company. When you buy a stock you become a part-owner of that business, even if it's a very small part.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>Stocks are equity securities representing a residual claim on a company's assets and earnings. Common stockholders sit at the bottom of the capital structure, meaning they are paid last in the event of liquidation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-number">02</div>
+      <div class="term-name">Share</div>
+      <div class="term-def">One single unit of a stock. If you buy 5 shares of Apple, you own 5 units of Apple's stock. The more shares you own, the bigger your ownership.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>Share count matters when calculating ownership percentage and earnings per share (EPS). Dilution occurs when a company issues more shares, reducing each existing shareholder's ownership percentage.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-number">03</div>
+      <div class="term-name">Stock Market</div>
+      <div class="term-def">A marketplace where people buy and sell stocks. Think of it like a giant store, but instead of products, people are trading pieces of companies.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>Markets operate through exchanges like NYSE and NASDAQ using electronic order matching systems. Price discovery happens continuously through the interaction of bid and ask orders from millions of participants.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-number">04</div>
+      <div class="term-name">ETF</div>
+      <div class="term-def">A bundle of many different stocks in one. Instead of buying one company, you buy a little bit of many at once — which spreads your risk.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>ETFs trade intraday on exchanges like stocks and typically track an index passively. Their low expense ratios and tax efficiency make them superior to most actively managed funds on a risk-adjusted basis.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-number">05</div>
+      <div class="term-name">Portfolio</div>
+      <div class="term-def">Your complete collection of investments. A strong portfolio spreads money across different investments rather than putting it all in one place.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>Portfolio construction involves balancing assets by correlation, not just quantity. Modern Portfolio Theory shows that combining assets with low correlation reduces overall volatility without proportionally reducing expected return.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-number">06</div>
+      <div class="term-name">Broker</div>
+      <div class="term-def">The platform or app you use to buy and sell stocks. Popular options include Robinhood, Fidelity, and Charles Schwab.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>Brokers act as intermediaries between investors and exchanges. They earn revenue through payment for order flow (PFOF), margin interest, and premium features — understanding this helps you evaluate potential conflicts of interest.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-number">07</div>
+      <div class="term-name">Dividends</div>
+      <div class="term-def">Cash payments some companies give shareholders regularly just for holding their stock. You don't have to sell anything to earn this money.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>Dividend yield = annual dividend / stock price. Investors track the payout ratio (dividends / earnings) to assess sustainability. High yields can signal value or distress — context matters.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-number">08</div>
+      <div class="term-name">Bull Market</div>
+      <div class="term-def">When the stock market is doing well and prices are generally rising. Usually means the economy is strong and people are confident about investing.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>Formally defined as a 20%+ rise from a recent low. Bull markets are driven by earnings growth, low interest rates, and positive investor sentiment. The average bull market lasts around 4 years.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-number">09</div>
+      <div class="term-name">Bear Market</div>
+      <div class="term-def">The opposite of a bull market — prices are falling and the market is struggling. Can be caused by recessions, rising unemployment, or major world events.</div>
+      <div class="term-expandable">
+        <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+        <div class="term-expand-content">
+          <p>Defined as a 20%+ decline from a recent high. Bear markets average around 9–18 months. Historically every bear market has been followed by a recovery, which is why long-term investors are advised to stay invested.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- HOW THE STOCK MARKET WORKS -->
+<hr class="section-divider">
+<div class="section" id="how-it-works">
+  <div class="section-label">Chapter 03</div>
+  <h2 class="section-title">How the Market <em>Works</em></h2>
+
+  <div class="market-layout">
+    <div class="market-text">
+      <p>Think of the stock market like a massive auction that never stops. The price of any stock is simply determined by what people are willing to pay for it. That's pure supply and demand — when more people want to buy a stock than sell it, the price goes up. When more people want out than in, the price drops.</p>
+      <p>What drives those decisions? Usually news and company performance. If a company gets caught in a scandal, investors lose confidence and sell — pushing the price down. If a biotech firm announces a major breakthrough, people rush to buy in — and the price jumps. The market is constantly reacting to new information.</p>
+      <p>One practical detail worth knowing — the market isn't open 24/7. In the US, trading happens Monday through Friday from 9:30 AM to 4:00 PM Eastern Time. Outside of those hours, you generally can't buy or sell, and the market is also closed on certain public holidays.</p>
+
+      <div class="expandable" style="margin-top:1.5rem;">
+        <button class="expand-btn" onclick="toggleExpand(this)">
+          <span>↗ Go Deeper — Advanced Explanation</span>
+          <em class="expand-icon">+</em>
+        </button>
+        <div class="expand-content">
+          <p>Price discovery is a continuous process driven by order flow. Every transaction requires a buyer and seller agreeing on price — the bid-ask spread represents the cost of immediacy. Market makers provide liquidity by quoting both sides, profiting from this spread.</p>
+          <p>Stock prices reflect the market's collective expectation of a company's future discounted cash flows. When new information enters the market — earnings reports, macro data, geopolitical events — prices adjust rapidly as participants revise their expectations, a concept central to the Efficient Market Hypothesis (EMH).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="market-steps">
+      <div class="market-step">
+        <div class="market-step-num">01</div>
+        <div class="market-step-content">
+          <strong>Companies list their stock</strong>
+          <span>A company goes public through an IPO, selling shares to raise money to grow the business.</span>
+        </div>
+      </div>
+      <div class="market-step">
+        <div class="market-step-num">02</div>
+        <div class="market-step-content">
+          <strong>Investors buy and sell</strong>
+          <span>Millions of people and institutions trade shares daily through broker platforms.</span>
+        </div>
+      </div>
+      <div class="market-step">
+        <div class="market-step-num">03</div>
+        <div class="market-step-content">
+          <strong>Price is set by demand</strong>
+          <span>More buyers than sellers = price goes up. More sellers than buyers = price goes down.</span>
+        </div>
+      </div>
+      <div class="market-step">
+        <div class="market-step-num">04</div>
+        <div class="market-step-content">
+          <strong>News moves prices</strong>
+          <span>Earnings reports, world events, and company news all cause investors to react and prices to shift.</span>
+        </div>
+      </div>
+      <div class="market-step">
+        <div class="market-step-num">05</div>
+        <div class="market-step-content">
+          <strong>Market hours matter</strong>
+          <span>Trading happens Mon–Fri, 9:30 AM – 4:00 PM ET. Outside these hours, you cannot trade.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BULL VS BEAR CHART -->
+  <div style="margin-top:2rem;border:1px solid var(--border);border-radius:3px;padding:1.5rem;background:#fafafa;">
+    <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:1rem;">Bull Market vs Bear Market — Visual Guide</div>
+    <canvas id="bullBearChart" style="width:100%;height:auto;display:block;"></canvas>
+  </div>
+</div>
+
+<!-- NAVIGATING THE MARKET -->
+<hr class="section-divider">
+<div class="section" id="navigating">
+  <div class="section-label">Chapter 04</div>
+  <h2 class="section-title">Navigating the <em>Market</em></h2>
+
+  <div class="content-block">
+    <div class="content-text">
+      <p>Opening a broker app for the first time can feel like landing in a foreign country. There are charts, numbers, percentages, and buttons all competing for your attention. This chapter is your translation guide — breaking down exactly what you're looking at so nothing feels unfamiliar when you're ready to make your first move.</p>
+      <p>Every broker looks slightly different, but they all display the same core information. Once you understand what each number actually means, any platform becomes straightforward to navigate.</p>
+
+      <div class="expandable" style="margin-top:1.5rem;">
+        <button class="expand-btn" onclick="toggleExpand(this)">
+          <span>↗ Go Deeper — Advanced View</span>
+          <em class="expand-icon">+</em>
+        </button>
+        <div class="expand-content">
+          <p>Professional traders use Level 2 quotes — a deeper view of the order book showing all pending buy and sell orders at every price level. This reveals where large institutional buyers and sellers are positioned, giving insight into short-term price direction. Most retail brokers offer a simplified version of this.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-visual">
+      <div class="visual-card">
+        <p class="visual-card-quote">"An investment in knowledge pays the best interest."</p>
+        <div class="visual-card-author">— Benjamin Franklin</div>
+        <div class="visual-divider"></div>
+        <div class="visual-fact">
+          <div class="visual-fact-num">67%</div>
+          <div class="visual-fact-text">of beginner investors say they felt confused by their broker interface when they first started — understanding what you're looking at is half the battle.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY NUMBERS ON A STOCK PAGE -->
+  <div style="margin-top:3rem;">
+    <div class="section-label" style="margin-bottom:1rem;">What the Numbers Mean</div>
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-number">KEY STAT</div>
+        <div class="term-name">Market Cap</div>
+        <div class="term-def">The total value of a company. Calculated by multiplying the stock price by the total number of shares. A $50 stock with 1 billion shares = $50 billion market cap.</div>
+        <div class="term-expandable">
+          <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+          <div class="term-expand-content">
+            <p>Market cap categorizes stocks: Large-cap ($10B+) are stable blue chips. Mid-cap ($2B–$10B) balance growth and stability. Small-cap (under $2B) offer high growth potential but higher volatility. Institutional investors often have restrictions on which cap sizes they can hold.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-number">KEY STAT</div>
+        <div class="term-name">Volume</div>
+        <div class="term-def">The number of shares traded today. High volume means a lot of people are buying and selling. Low volume means the stock is quiet. Volume spikes often signal something important is happening.</div>
+        <div class="term-expandable">
+          <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+          <div class="term-expand-content">
+            <p>Volume confirms price movements. A price breakout on high volume is considered more reliable than one on low volume. Average Daily Volume (ADV) is used to assess liquidity — thinly traded stocks have wider bid-ask spreads and are harder to exit quickly.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-number">KEY STAT</div>
+        <div class="term-name">52 Week High / Low</div>
+        <div class="term-def">The highest and lowest price the stock has traded at over the past year. This gives you context — is the stock near its peak or near its bottom compared to recent history?</div>
+        <div class="term-expandable">
+          <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+          <div class="term-expand-content">
+            <p>The 52-week high/low acts as a psychological support and resistance level. Stocks breaking above their 52-week high often see momentum buying. Stocks near 52-week lows may be value opportunities or falling knives — context from fundamentals is essential.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-number">KEY STAT</div>
+        <div class="term-name">P/E Ratio</div>
+        <div class="term-def">Price-to-Earnings ratio. How much you are paying for every $1 of the company's earnings. A P/E of 20 means you're paying $20 for every $1 of profit. Lower can mean cheaper, but context matters.</div>
+        <div class="term-expandable">
+          <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+          <div class="term-expand-content">
+            <p>Compare P/E to the industry average, not in isolation. The forward P/E uses projected earnings instead of historical. A high P/E can mean overvalued or high expected growth. The PEG ratio (P/E divided by growth rate) adjusts for growth and is often more useful.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-number">KEY STAT</div>
+        <div class="term-name">Dividend Yield</div>
+        <div class="term-def">The annual dividend payment as a percentage of the stock price. A $100 stock paying $4 in dividends per year has a 4% dividend yield. This tells you how much income the stock generates.</div>
+        <div class="term-expandable">
+          <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+          <div class="term-expand-content">
+            <p>A very high yield (8%+) can be a red flag — it may signal the stock price has fallen dramatically or the dividend is unsustainable. Always check the payout ratio alongside the yield to verify the dividend is healthy and likely to continue.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-number">KEY STAT</div>
+        <div class="term-name">EPS</div>
+        <div class="term-def">Earnings Per Share — the company's total profit divided by its number of shares. EPS of $5 means the company earned $5 for every share outstanding. Growing EPS over time is a very positive sign.</div>
+        <div class="term-expandable">
+          <button class="term-expand-btn" onclick="toggleTerm(this)">+ Advanced</button>
+          <div class="term-expand-content">
+            <p>Watch for the difference between GAAP EPS (official accounting) and adjusted EPS (excludes one-time items). Companies often highlight adjusted EPS to look more profitable. Diluted EPS accounts for stock options and convertible securities, giving a more conservative picture.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER TYPES -->
+  <div style="margin-top:3rem;">
+    <div class="section-label" style="margin-bottom:1rem;">Types of Orders</div>
+    <div class="market-steps">
+      <div class="market-step">
+        <div class="market-step-num">01</div>
+        <div class="market-step-content">
+          <strong>Market Order</strong>
+          <span>Buys or sells immediately at the current market price. The fastest and simplest order type, but you have no control over the exact price you get.</span>
+        </div>
+      </div>
+      <div class="market-step">
+        <div class="market-step-num">02</div>
+        <div class="market-step-content">
+          <strong>Limit Order</strong>
+          <span>You set the exact price you want to buy or sell at. The order only executes if the stock hits your price. Great for getting a specific entry point without overpaying.</span>
+        </div>
+      </div>
+      <div class="market-step">
+        <div class="market-step-num">03</div>
+        <div class="market-step-content">
+          <strong>Stop Loss Order</strong>
+          <span>Automatically sells your stock if the price drops to a level you set. Protects you from large losses by getting you out before things get worse.</span>
+        </div>
+      </div>
+      <div class="market-step">
+        <div class="market-step-num">04</div>
+        <div class="market-step-content">
+          <strong>Stop Limit Order</strong>
+          <span>A combination of a stop and a limit order. Triggers at your stop price but only executes within your limit range. Gives more control but may not fill if the price moves too fast.</span>
+        </div>
+      </div>
+      <div class="market-step">
+        <div class="market-step-num">05</div>
+        <div class="market-step-content">
+          <strong>Trailing Stop Order</strong>
+          <span>Like a stop loss but it moves up automatically as the stock price rises. Locks in profits while still protecting against a sudden drop. Popular with experienced investors.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER TYPES DIAGRAM -->
+    <div style="margin-top:1.5rem;border:1px solid var(--border);border-radius:3px;padding:1.5rem;background:#fafafa;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:1rem;">Order Types — Visual Guide</div>
+      <canvas id="orderChart" style="width:100%;height:auto;display:block;"></canvas>
+    </div>
+  </div>
+
+  <!-- CHART TYPES -->
+  <div style="margin-top:3rem;">
+    <div class="section-label" style="margin-bottom:1rem;">Types of Charts</div>
+    <div class="money-grid">
+      <div class="money-card">
+        <div class="money-card-tag">Chart Type 01</div>
+        <div class="money-card-title">Line Chart</div>
+        <p>The simplest chart — just a line connecting closing prices over time. Great for seeing the overall trend at a glance. This is what most broker apps show by default and what we use on our chart explainer above.</p>
+        <div class="money-example">Best for: Beginners · Quick trend overview · Long time ranges</div>
+      </div>
+      <div class="money-card">
+        <div class="money-card-tag">Chart Type 02</div>
+        <div class="money-card-title">Candlestick Chart</div>
+        <p>The most popular chart among active traders. Each "candle" shows four prices for a time period — the open, close, high, and low. Green candles mean the price went up during that period. Red means it went down.</p>
+        <div class="money-example">Best for: Short-term analysis · Seeing daily price ranges · Pattern recognition</div>
+        <div class="expandable" style="margin-top:1rem;">
+          <button class="expand-btn" onclick="toggleExpand(this)">
+            <span>↗ How to read a candlestick</span>
+            <em class="expand-icon">+</em>
+          </button>
+          <div class="expand-content">
+            <p>Each candle has a body (the open to close range) and wicks (thin lines showing the high and low). A long green body with small wicks = strong buying pressure. A long red body = strong selling. A candle with a tiny body and long wicks = indecision. Patterns like Doji, Hammer, and Engulfing are used by technical analysts to predict reversals.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CANDLESTICK EXPLAINER CHART -->
+      <div class="money-card" style="grid-column:1/-1;">
+        <div class="money-card-tag">Visual Guide</div>
+        <div class="money-card-title">How to Read a Candlestick</div>
+        <p style="margin-bottom:1.2rem;">Each candle tells a complete story about price action during that period. Here's exactly what each part means.</p>
+        <canvas id="candlestickChart" style="width:100%;height:auto;display:block;"></canvas>
+      </div>
+
+      <!-- VOLUME BARS EXPLAINER -->
+      <div class="money-card" style="grid-column:1/-1;">
+        <div class="money-card-tag">Visual Guide</div>
+        <div class="money-card-title">Understanding Volume Bars</div>
+        <p style="margin-bottom:1.2rem;">Volume bars sit at the bottom of most charts. Here's how to read what they're telling you.</p>
+        <canvas id="volumeChart" style="width:100%;height:auto;display:block;"></canvas>
+      </div>
+      <div class="money-card">
+        <div class="money-card-tag">Chart Type 03</div>
+        <div class="money-card-title">Bar Chart</div>
+        <p>Similar to a candlestick chart but displayed as vertical bars. Each bar shows the open, close, high, and low price for a period. Less visually intuitive than candlesticks but contains the same information.</p>
+        <div class="money-example">Best for: OHLC data · Traditional technical analysis</div>
+      </div>
+      <div class="money-card">
+        <div class="money-card-tag">Chart Type 04</div>
+        <div class="money-card-title">Volume Bars</div>
+        <p>Usually shown at the bottom of any chart as vertical bars. They show how many shares were traded in each time period. Spikes in volume often confirm that a price move is significant and not just a random blip.</p>
+        <div class="money-example">Best for: Confirming price moves · Spotting unusual activity</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO MAKE MONEY -->
+<hr class="section-divider">
+<div class="section" id="make-money">
+  <div class="section-label">Chapter 05</div>
+  <h2 class="section-title">How to Make <em>Money</em></h2>
+
+  <div class="money-grid">
+    <div class="money-card">
+      <div class="money-card-tag">Method 01</div>
+      <div class="money-card-title">Price Appreciation</div>
+      <p>This is the most common way to make money in the market. You buy a stock at one price, wait for it to grow in value over time, then sell it for more than you paid. The difference is your profit.</p>
+      <div class="money-example">
+        Buy: $50 per share → Sell: $80 per share<br>
+        Profit: $30 per share
+      </div>
+      <div class="expandable" style="margin-top:1rem;">
+        <button class="expand-btn" onclick="toggleExpand(this)">
+          <span>↗ Go Deeper</span>
+          <em class="expand-icon">+</em>
+        </button>
+        <div class="expand-content">
+          <p>Price appreciation is driven by the market's revision of a company's expected future cash flows. When earnings grow faster than expected, or when interest rates fall (making future earnings worth more today), stock prices rise. The formula: Price = Earnings × P/E Multiple.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="money-card">
+      <div class="money-card-tag">Method 02</div>
+      <div class="money-card-title">Dividends</div>
+      <p>Some companies reward investors by paying them cash regularly just for holding the stock. You don't have to sell anything — the money is deposited into your account automatically, usually every few months.</p>
+      <div class="money-example">
+        Own 100 shares · $2 dividend/share/year<br>
+        = $200 per year, just for holding
+      </div>
+      <div class="expandable" style="margin-top:1rem;">
+        <button class="expand-btn" onclick="toggleExpand(this)">
+          <span>↗ Go Deeper</span>
+          <em class="expand-icon">+</em>
+        </button>
+        <div class="expand-content">
+          <p>Dividend yield = annual dividend ÷ stock price. Investors also track the payout ratio (dividends ÷ earnings per share) to assess whether dividends are sustainable. A payout ratio above 80% may signal the dividend is at risk of being cut.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="money-wide">
+      <div class="money-wide-title">Unrealized vs Realized Gains</div>
+      <p>Before you can make money, you need to understand the difference between unrealized and realized gains. If your stock goes up but you haven't sold it yet, that profit is unrealized — it's on paper only. Once you sell and the money hits your account, it becomes realized. Stocks can go up and then come back down, so nothing is truly yours until you sell.</p>
+      <div class="gains-row">
+        <div class="gain-box">
+          <div class="gain-box-label">Unrealized Gain</div>
+          <div class="gain-box-value">On Paper</div>
+          <div class="gain-box-desc">Stock went up but you haven't sold. Value can still go down.</div>
+        </div>
+        <div class="gain-box">
+          <div class="gain-box-label">Realized Gain</div>
+          <div class="gain-box-value">In Your Pocket</div>
+          <div class="gain-box-desc">You sold the stock. The profit is locked in and yours.</div>
+        </div>
+        <div class="gain-box">
+          <div class="gain-box-label">Long Term Wins</div>
+          <div class="gain-box-value">Be Patient</div>
+          <div class="gain-box-desc">Historically, staying invested long term outperforms trying to time the market.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RISK MANAGEMENT -->
+<hr class="section-divider">
+<div class="section" id="risk">
+  <div class="section-label">Chapter 06</div>
+  <h2 class="section-title">Managing <em>Risk</em></h2>
+
+  <div class="risk-layout">
+    <div class="risk-list">
+      <div class="risk-item">
+        <div class="risk-icon">01</div>
+        <div>
+          <div class="risk-item-title">Market Risk</div>
+          <div class="risk-item-desc">The entire market drops, taking your investments with it. Managed by investing long-term — the market has always recovered historically.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-icon">02</div>
+        <div>
+          <div class="risk-item-title">Company Risk</div>
+          <div class="risk-item-desc">A specific company you invested in fails or goes bankrupt. Managed through diversification — spread your money across many companies.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-icon">03</div>
+        <div>
+          <div class="risk-item-title">Emotional Risk</div>
+          <div class="risk-item-desc">Panic selling when the market dips or buying recklessly when it's booming. Managed by sticking to a plan and not making decisions based on fear.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-icon">04</div>
+        <div>
+          <div class="risk-item-title">Concentration Risk</div>
+          <div class="risk-item-desc">Putting too much money into one stock or one industry. If that sector crashes, you lose everything. Spread across different industries.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-icon">05</div>
+        <div>
+          <div class="risk-item-title">Time Risk</div>
+          <div class="risk-item-desc">Investing money you might need soon. If the market drops when you need cash, you're forced to sell at a loss. Only invest what you won't need for 3–5 years.</div>
+        </div>
+      </div>
+
+      <div class="expandable" style="margin-top:1rem;">
+        <button class="expand-btn" onclick="toggleExpand(this)">
+          <span>↗ Go Deeper — Advanced Risk Concepts</span>
+          <em class="expand-icon">+</em>
+        </button>
+        <div class="expand-content">
+          <p>Advanced investors quantify risk using standard deviation (volatility), beta (sensitivity to market moves), and the Sharpe ratio (return per unit of risk). A portfolio's risk is not the average of its holdings' risks — correlation between assets is what determines true diversification benefit.</p>
+          <p>Systematic risk (market-wide) cannot be diversified away. Unsystematic risk (company-specific) can be nearly eliminated with 20–30 uncorrelated holdings.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="risk-tip-card">
+      <div class="risk-tip-label">The Golden Rule</div>
+      <div class="risk-tip-title">Don't Put All Your Eggs in One Basket</div>
+      <p>Diversification is the single most powerful tool for managing risk. By spreading your money across different companies, industries, and asset types, you protect yourself from any one thing wiping out your portfolio.</p>
+      <p>A simple diversified portfolio for beginners:</p>
+      <div class="diversify-bar">
+        <div class="div-row">
+          <div class="div-label">US Stocks</div>
+          <div class="div-bar-wrap"><div class="div-bar-fill" style="width:60%"></div></div>
+          <div class="div-label" style="min-width:30px;text-align:right;">60%</div>
+        </div>
+        <div class="div-row">
+          <div class="div-label">Intl Stocks</div>
+          <div class="div-bar-wrap"><div class="div-bar-fill" style="width:25%"></div></div>
+          <div class="div-label" style="min-width:30px;text-align:right;">25%</div>
+        </div>
+        <div class="div-row">
+          <div class="div-label">Bonds</div>
+          <div class="div-bar-wrap"><div class="div-bar-fill" style="width:15%"></div></div>
+          <div class="div-label" style="min-width:30px;text-align:right;">15%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO GET STARTED -->
+<hr class="section-divider">
+<div class="section" id="get-started">
+  <div class="section-label">Chapter 07</div>
+  <h2 class="section-title">How to Get <em>Started</em></h2>
+
+  <div class="steps-layout">
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-card-num">01</div>
+        <div class="step-card-title">Set Your Goal</div>
+        <div class="step-card-desc">Know why you're investing — retirement, a house, or growing wealth. Your goal determines your timeline and how much risk to take.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-num">02</div>
+        <div class="step-card-title">Build an Emergency Fund</div>
+        <div class="step-card-desc">Before investing, save 3–6 months of expenses. This way you'll never be forced to sell investments at a bad time.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-num">03</div>
+        <div class="step-card-title">Decide How Much</div>
+        <div class="step-card-desc">Only invest money you won't need for a long time. Even $50 or $100 is a fine start — what matters is getting started.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-num">04</div>
+        <div class="step-card-title">Choose a Broker</div>
+        <div class="step-card-desc">Pick a platform to buy stocks through. Look for no minimum deposit and no trading fees. Popular options below.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-num">05</div>
+        <div class="step-card-title">Open Your Account</div>
+        <div class="step-card-desc">Sign up, verify your identity, and connect your bank account. This usually takes just a few minutes.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-num">06</div>
+        <div class="step-card-title">Decide What to Buy</div>
+        <div class="step-card-desc">For beginners, an ETF or index fund is the safest starting point. It gives you instant diversification across hundreds of companies.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-num">07</div>
+        <div class="step-card-title">Make Your First Buy</div>
+        <div class="step-card-desc">Search for the stock or ETF, enter how many shares you want, and confirm. You're now an investor.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-num">08</div>
+        <div class="step-card-title">Be Patient</div>
+        <div class="step-card-desc">Don't check your portfolio every day. Investing is a long game. Set it, let it grow, and resist the urge to react to every market move.</div>
+      </div>
+    </div>
+
+    <div class="started-cta">
+      <div class="started-cta-text">
+        <h3>Ready to Start? Pick a Broker.</h3>
+        <p>All of these are beginner friendly, with no minimum deposit and no trading fees.</p>
+      </div>
+      <div class="brokers-list">
+        <div class="broker-tag">Robinhood</div>
+        <div class="broker-tag">Fidelity</div>
+        <div class="broker-tag">Charles Schwab</div>
+        <div class="broker-tag">Webull</div>
+        <div class="broker-tag">SoFi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADVANCED TOPICS CHAPTER -->
+<hr class="section-divider">
+<div class="section" id="advanced">
+  <div class="section-label">Chapter 08</div>
+  <h2 class="section-title">Advanced <em>Strategies</em></h2>
+
+  <div class="advanced-intro">
+    <div class="advanced-intro-warning">!</div>
+    <div class="advanced-intro-text">
+      <h3>A Note Before You Dive In</h3>
+      <p>The strategies below go beyond basic investing. Some carry serious risk — including the possibility of losing more than you put in. We're covering them here because they're important to understand, not because they're right for everyone. Make sure you're solid on the fundamentals first, and always do your own research before acting on anything.</p>
+    </div>
+  </div>
+
+  <div class="advanced-topics-grid">
+
+    <!-- DAY TRADING -->
+    <div class="advanced-card">
+      <div class="advanced-card-header">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:0.3rem;">01</div>
+          <div class="advanced-card-title">Day Trading</div>
+        </div>
+        <div class="risk-badge very-high">Very High Risk</div>
+      </div>
+      <div class="advanced-card-body">
+        <p>Day trading is the practice of buying and selling stocks within the same trading day, sometimes holding positions for only minutes or hours. The goal is to profit from small short-term price movements rather than long-term growth.</p>
+        <div class="advanced-stat-row">
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">90%</div>
+            <div class="advanced-stat-label">of day traders lose money</div>
+          </div>
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">$25k</div>
+            <div class="advanced-stat-label">minimum required by US law</div>
+          </div>
+        </div>
+        <div class="advanced-warning">Day trading is not investing — it is speculation. The vast majority of day traders lose money after accounting for fees, taxes, and the emotional toll. Studies show over 90% of day traders are unprofitable long term.</div>
+        <div class="advanced-tip">If you're curious about short-term trading, start with a paper trading account — a simulated account with fake money — before risking real funds.</div>
+      </div>
+      <button class="advanced-expand-btn" onclick="toggleAdvanced(this)">
+        <span>How it actually works</span><span>+</span>
+      </button>
+      <div class="advanced-expand-content">
+        <p>Day traders use technical analysis — reading price charts and patterns — to make rapid buy and sell decisions. They rely on tools like Level 2 quotes, order flow, and momentum indicators. In the US, the Pattern Day Trader rule requires a minimum $25,000 account balance if you make 4+ day trades in 5 business days. Profits from day trading are taxed as ordinary income (not the lower capital gains rate), making it even harder to be profitable.</p>
+      </div>
+    </div>
+
+    <!-- OPTIONS TRADING -->
+    <div class="advanced-card">
+      <div class="advanced-card-header">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:0.3rem;">02</div>
+          <div class="advanced-card-title">Options Trading</div>
+        </div>
+        <div class="risk-badge very-high">Very High Risk</div>
+      </div>
+      <div class="advanced-card-body">
+        <p>An option is a contract that gives you the right — but not the obligation — to buy or sell a stock at a specific price before a specific date. Options can be used to protect investments or to speculate on price movements with leverage.</p>
+        <div class="advanced-stat-row">
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">2x</div>
+            <div class="advanced-stat-label">to 100x leverage possible</div>
+          </div>
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">$0</div>
+            <div class="advanced-stat-label">options can expire worthless</div>
+          </div>
+        </div>
+        <div class="advanced-warning">Options can expire completely worthless, meaning you can lose 100% of what you put in. Selling certain types of options can expose you to theoretically unlimited losses.</div>
+        <div class="advanced-tip">Options are best understood as insurance contracts first. Learn how they work as hedges before using them to speculate.</div>
+      </div>
+      <button class="advanced-expand-btn" onclick="toggleAdvanced(this)">
+        <span>Calls, puts & how they work</span><span>+</span>
+      </button>
+      <div class="advanced-expand-content">
+        <p>A call option gives you the right to buy a stock at a set price (the strike price) before expiration. A put option gives you the right to sell. If you buy a call and the stock rises above your strike price, you profit. If the stock doesn't move as expected before the expiration date, the option expires worthless and you lose your premium. Key terms: premium (what you pay), strike price (target price), expiration date, and the Greeks (delta, gamma, theta, vega) which measure how the option price changes.</p>
+      </div>
+    </div>
+
+    <!-- SHORT SELLING -->
+    <div class="advanced-card">
+      <div class="advanced-card-header">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:0.3rem;">03</div>
+          <div class="advanced-card-title">Short Selling</div>
+        </div>
+        <div class="risk-badge very-high">Very High Risk</div>
+      </div>
+      <div class="advanced-card-body">
+        <p>Short selling is betting that a stock will go down in price. You borrow shares from your broker, sell them immediately, and hope to buy them back later at a lower price — pocketing the difference. It's essentially the opposite of normal investing.</p>
+        <div class="advanced-stat-row">
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">∞</div>
+            <div class="advanced-stat-label">theoretically unlimited loss</div>
+          </div>
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">100%</div>
+            <div class="advanced-stat-label">max gain if stock hits zero</div>
+          </div>
+        </div>
+        <div class="advanced-warning">When you buy a stock, the most you can lose is what you invested. When you short a stock, losses are theoretically unlimited — a stock can keep rising forever. Short squeezes (like GameStop in 2021) can wipe out short sellers instantly.</div>
+        <div class="advanced-tip">Short selling is best left to professionals. For most retail investors, buying put options is a safer way to profit from a declining stock.</div>
+      </div>
+      <button class="advanced-expand-btn" onclick="toggleAdvanced(this)">
+        <span>How short selling works step by step</span><span>+</span>
+      </button>
+      <div class="advanced-expand-content">
+        <p>You borrow 100 shares of XYZ at $50 from your broker and sell them immediately for $5,000. If the stock drops to $30, you buy 100 shares for $3,000 and return them to your broker, keeping the $2,000 difference (minus fees and interest). But if XYZ rises to $100, you'd need $10,000 to close the position — a $5,000 loss on a $5,000 trade. Short sellers also pay borrowing fees and must maintain margin requirements, adding to costs.</p>
+      </div>
+    </div>
+
+    <!-- DOLLAR COST AVERAGING -->
+    <div class="advanced-card">
+      <div class="advanced-card-header">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:0.3rem;">04</div>
+          <div class="advanced-card-title">Dollar Cost Averaging</div>
+        </div>
+        <div class="risk-badge low">Low Risk Strategy</div>
+      </div>
+      <div class="advanced-card-body">
+        <p>Dollar cost averaging (DCA) is investing a fixed amount of money at regular intervals — for example, $200 every month — regardless of what the market is doing. Instead of trying to time the market, you simply invest consistently over time.</p>
+        <div class="advanced-stat-row">
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">#1</div>
+            <div class="advanced-stat-label">recommended beginner strategy</div>
+          </div>
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">0</div>
+            <div class="advanced-stat-label">timing decisions needed</div>
+          </div>
+        </div>
+        <div class="advanced-tip">DCA is one of the most beginner-friendly and proven strategies. It removes emotion from investing and takes advantage of market dips automatically — when prices are lower, your fixed amount buys more shares.</div>
+      </div>
+      <button class="advanced-expand-btn" onclick="toggleAdvanced(this)">
+        <span>Why DCA works mathematically</span><span>+</span>
+      </button>
+      <div class="advanced-expand-content">
+        <p>DCA works because of a mathematical principle: when you invest the same dollar amount consistently, you automatically buy more shares when prices are low and fewer when prices are high. This lowers your average cost per share over time compared to investing a lump sum at the wrong moment. Studies show that DCA often outperforms lump-sum investing for investors who are prone to emotional decision-making, though a lump-sum investment outperforms DCA about 66% of the time in purely mathematical terms.</p>
+      </div>
+    </div>
+
+    <!-- TECHNICAL ANALYSIS -->
+    <div class="advanced-card">
+      <div class="advanced-card-header">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:0.3rem;">05</div>
+          <div class="advanced-card-title">Technical Analysis</div>
+        </div>
+        <div class="risk-badge medium">Medium Risk</div>
+      </div>
+      <div class="advanced-card-body">
+        <p>Technical analysis is the study of price charts and trading patterns to predict future price movements. Instead of looking at a company's financials, technical analysts look purely at the stock's historical price and volume data to find patterns and signals.</p>
+        <div class="advanced-stat-row">
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">100+</div>
+            <div class="advanced-stat-label">chart indicators exist</div>
+          </div>
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">Mixed</div>
+            <div class="advanced-stat-label">evidence on effectiveness</div>
+          </div>
+        </div>
+        <div class="advanced-tip">Technical analysis is most useful as a tool to identify entry and exit points once you've already decided a stock is worth buying through fundamental research.</div>
+      </div>
+      <button class="advanced-expand-btn" onclick="toggleAdvanced(this)">
+        <span>Key indicators explained</span><span>+</span>
+      </button>
+      <div class="advanced-expand-content">
+        <p>Common technical indicators include: Moving Averages (MA) — the average price over a set period, used to identify trends. RSI (Relative Strength Index) — measures whether a stock is overbought or oversold on a scale of 0–100. MACD (Moving Average Convergence Divergence) — shows momentum and trend direction. Support and Resistance levels — price points where a stock historically bounces or stalls. Candlestick patterns — visual representations of price movement within a time period. Critics note that technical analysis is subjective and the evidence for its predictive power is mixed.</p>
+      </div>
+    </div>
+
+    <!-- FUNDAMENTAL ANALYSIS -->
+    <div class="advanced-card">
+      <div class="advanced-card-header">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:0.3rem;">06</div>
+          <div class="advanced-card-title">Fundamental Analysis</div>
+        </div>
+        <div class="risk-badge low">Research Based</div>
+      </div>
+      <div class="advanced-card-body">
+        <p>Fundamental analysis is the process of evaluating a company's true value by studying its financial statements, business model, industry position, and economic conditions. The goal is to determine whether a stock is undervalued or overvalued compared to its current price.</p>
+        <div class="advanced-stat-row">
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">P/E</div>
+            <div class="advanced-stat-label">price to earnings ratio</div>
+          </div>
+          <div class="advanced-stat">
+            <div class="advanced-stat-num">EPS</div>
+            <div class="advanced-stat-label">earnings per share</div>
+          </div>
+        </div>
+        <div class="advanced-tip">Fundamental analysis is the backbone of long-term value investing — the strategy used by Warren Buffett and most successful long-term investors. It takes more work but leads to more informed decisions.</div>
+      </div>
+      <button class="advanced-expand-btn" onclick="toggleAdvanced(this)">
+        <span>Key metrics to know</span><span>+</span>
+      </button>
+      <div class="advanced-expand-content">
+        <p>Key metrics: P/E Ratio (Price/Earnings) — how much you're paying per dollar of earnings. A high P/E may mean overvalued or high growth expected. EPS (Earnings Per Share) — company profit divided by shares outstanding. Revenue Growth — is the company growing its sales? Profit Margin — how much of revenue becomes profit. Debt-to-Equity Ratio — how much the company is borrowing vs. its own value. Free Cash Flow — cash left after expenses, the lifeblood of a business. These metrics are found in a company's 10-K annual report, which is publicly available on the SEC's EDGAR database.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- INTERACTIVES HEADER -->
+<hr class="section-divider">
+<div class="interactive-section" id="tools">
+  <div class="section-label">Interactive Tools</div>
+  <h2 class="section-title">Learn by <em>Doing</em></h2>
+</div>
+
+<!-- COMPOUND INTEREST CALCULATOR -->
+<hr class="section-divider">
+<div class="interactive-section" id="calculator">
+  <div class="interactive-tag">Tool 01</div>
+  <div class="section-label">Compound Interest Calculator</div>
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.03em;margin-bottom:0.5rem;">See Your Money <em style="font-family:'Barlow',sans-serif;">Grow</em></h3>
+  <p style="color:var(--grey);font-size:0.88rem;font-weight:300;max-width:500px;">Adjust the sliders to see how your investment grows over time with the power of compounding.</p>
+
+  <div class="calc-layout">
+    <div class="calc-inputs">
+      <div class="calc-field">
+        <div class="calc-field-row">
+          <label>Initial Investment</label>
+          <div class="calc-field-val" id="calcAmountVal">$10,000</div>
+        </div>
+        <input type="range" id="calcAmount" min="500" max="100000" step="500" value="10000" oninput="updateCalc()">
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-row">
+          <label>Annual Return</label>
+          <div class="calc-field-val" id="calcRateVal">10%</div>
+        </div>
+        <input type="range" id="calcRate" min="1" max="20" step="0.5" value="10" oninput="updateCalc()">
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-row">
+          <label>Years Invested</label>
+          <div class="calc-field-val" id="calcYearsVal">30 yrs</div>
+        </div>
+        <input type="range" id="calcYears" min="1" max="50" step="1" value="30" oninput="updateCalc()">
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-row">
+          <label>Monthly Contribution</label>
+          <div class="calc-field-val" id="calcMonthlyVal">$0</div>
+        </div>
+        <input type="range" id="calcMonthly" min="0" max="10000" step="100" value="0" oninput="updateCalc()">
+      </div>
+    </div>
+
+    <div class="calc-result">
+      <div class="calc-result-label">Final Portfolio Value</div>
+      <div class="calc-result-value" id="calcFinal">$174,494</div>
+      <div class="calc-result-sub" id="calcSubtext">After 30 years at 10% return</div>
+      <div class="calc-breakdown">
+        <div class="calc-breakdown-row"><span>Amount Invested</span><span id="calcInvested">$10,000</span></div>
+        <div class="calc-breakdown-row"><span>Total Growth</span><span id="calcGrowth">$164,494</span></div>
+        <div class="calc-breakdown-row"><span>Growth Multiplier</span><span id="calcMultiplier">17.4x</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTFOLIO BUILDER -->
+<hr class="section-divider">
+<div class="interactive-section" id="portfolio-builder">
+  <div class="interactive-tag">Tool 02</div>
+  <div class="section-label">Portfolio Builder</div>
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.03em;margin-bottom:0.5rem;">Build Your <em style="font-family:'Barlow',sans-serif;">Portfolio</em></h3>
+  <p style="color:var(--grey);font-size:0.88rem;font-weight:300;max-width:500px;">Drag the sliders to allocate your portfolio across different asset types. Try to keep the total at 100%.</p>
+
+  <div class="portfolio-layout">
+    <div class="portfolio-grid">
+      <div class="portfolio-assets" id="assetSliders">
+        <div class="asset-row">
+          <div class="asset-color" style="background:#0a0a0a;"></div>
+          <div>
+            <div class="asset-name">US Stocks</div>
+            <div style="font-size:0.68rem;color:var(--grey);font-weight:300;">High growth, higher risk</div>
+          </div>
+          <input type="range" min="0" max="100" value="50" oninput="updatePortfolio()" data-asset="US Stocks">
+          <div class="asset-pct" id="pct0">50%</div>
+        </div>
+        <div class="asset-row">
+          <div class="asset-color" style="background:#555;"></div>
+          <div>
+            <div class="asset-name">International Stocks</div>
+            <div style="font-size:0.68rem;color:var(--grey);font-weight:300;">Global diversification</div>
+          </div>
+          <input type="range" min="0" max="100" value="20" oninput="updatePortfolio()" data-asset="Intl Stocks">
+          <div class="asset-pct" id="pct1">20%</div>
+        </div>
+        <div class="asset-row">
+          <div class="asset-color" style="background:#999;"></div>
+          <div>
+            <div class="asset-name">Bonds</div>
+            <div style="font-size:0.68rem;color:var(--grey);font-weight:300;">Lower risk, steady returns</div>
+          </div>
+          <input type="range" min="0" max="100" value="20" oninput="updatePortfolio()" data-asset="Bonds">
+          <div class="asset-pct" id="pct2">20%</div>
+        </div>
+        <div class="asset-row">
+          <div class="asset-color" style="background:#ccc;"></div>
+          <div>
+            <div class="asset-name">Real Estate (REITs)</div>
+            <div style="font-size:0.68rem;color:var(--grey);font-weight:300;">Income + inflation hedge</div>
+          </div>
+          <input type="range" min="0" max="100" value="10" oninput="updatePortfolio()" data-asset="REITs">
+          <div class="asset-pct" id="pct3">10%</div>
+        </div>
+        <div class="asset-row">
+          <div class="asset-color" style="background:#e8e8e3;border:1px solid #ccc;"></div>
+          <div>
+            <div class="asset-name">Cash / Bonds</div>
+            <div style="font-size:0.68rem;color:var(--grey);font-weight:300;">Safety net, low return</div>
+          </div>
+          <input type="range" min="0" max="100" value="0" oninput="updatePortfolio()" data-asset="Cash">
+          <div class="asset-pct" id="pct4">0%</div>
+        </div>
+      </div>
+
+      <div class="portfolio-visual">
+        <div class="portfolio-donut-wrap">
+          <div class="portfolio-donut-title">Portfolio Allocation</div>
+          <canvas id="donutChart" width="220" height="220"></canvas>
+          <div class="portfolio-total ok" id="portfolioTotal">Total: 100%</div>
+          <div class="portfolio-legend" id="portfolioLegend"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RISK TOLERANCE QUIZ -->
+<hr class="section-divider">
+<div class="interactive-section" id="quiz">
+  <div class="interactive-tag">Tool 03</div>
+  <div class="section-label">Risk Tolerance Quiz</div>
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.03em;margin-bottom:0.5rem;">What Type of <em style="font-family:'Barlow',sans-serif;">Investor</em> Are You?</h3>
+  <p style="color:var(--grey);font-size:0.88rem;font-weight:300;max-width:500px;margin-bottom:0;">Answer 5 questions to find out your investing personality and get personalized recommendations.</p>
+
+  <div class="quiz-layout">
+    <div id="quizArea">
+      <div class="quiz-progress" id="quizProgress">
+        <div class="quiz-progress-bar active"></div>
+        <div class="quiz-progress-bar"></div>
+        <div class="quiz-progress-bar"></div>
+        <div class="quiz-progress-bar"></div>
+        <div class="quiz-progress-bar"></div>
+      </div>
+      <div class="quiz-question" id="quizQuestion"></div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-nav">
+        <button class="btn-primary" onclick="nextQuestion()" id="quizNext" style="display:none;">Next Question →</button>
+        <span class="quiz-counter" id="quizCounter">1 / 5</span>
+      </div>
+    </div>
+    <div class="quiz-result" id="quizResult">
+      <div class="quiz-result-header">
+        <div class="quiz-result-type" id="resultType"></div>
+        <div class="quiz-result-desc" id="resultDesc"></div>
+      </div>
+      <div class="quiz-result-body">
+        <div class="quiz-result-recs" id="resultRecs"></div>
+        <button class="btn-primary" style="margin-top:1.5rem;" onclick="restartQuiz()">Retake Quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKET SCENARIO GAME -->
+<hr class="section-divider">
+<div class="interactive-section" id="game">
+  <div class="interactive-tag">Tool 04</div>
+  <div class="section-label">Market Scenario Game</div>
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.03em;margin-bottom:0.5rem;">Test Your <em style="font-family:'Barlow',sans-serif;">Instincts</em></h3>
+  <p style="color:var(--grey);font-size:0.88rem;font-weight:300;max-width:500px;margin-bottom:0;">Real market scenarios. What would you do? Make the right call to grow your virtual portfolio.</p>
+
+  <div class="game-layout">
+    <div class="game-header">
+      <div class="game-stats-bar">
+        <div class="game-stat">
+          <div class="game-stat-label">Portfolio</div>
+          <div class="game-stat-value" id="gamePortfolio">$10,000</div>
+        </div>
+        <div class="game-stat">
+          <div class="game-stat-label">Change</div>
+          <div class="game-stat-value" id="gameChange">—</div>
+        </div>
+        <div class="game-stat">
+          <div class="game-stat-label">Score</div>
+          <div class="game-stat-value" id="gameScore">0 / 0</div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="restartGame()">Restart Game</button>
+    </div>
+
+    <div class="game-scenario" id="gameScenario">
+      <div class="game-scenario-header">
+        <span id="gameCompany" style="font-family:'DM Mono',monospace;font-size:0.8rem;letter-spacing:0.06em;">SCENARIO</span>
+        <span class="game-round" id="gameRound">Round 1 of 6</span>
+      </div>
+      <div class="game-scenario-text" id="gameText"></div>
+      <div class="game-choices" id="gameChoices"></div>
+      <div class="game-feedback" id="gameFeedback"></div>
+    </div>
+
+    <div style="text-align:center;display:none;" id="gameOver">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin-bottom:0.5rem;" id="gameOverTitle"></div>
+      <div style="font-size:0.88rem;color:var(--grey);margin-bottom:1.5rem;" id="gameOverDesc"></div>
+      <button class="btn-primary" onclick="restartGame()">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ SECTION -->
+<hr class="section-divider">
+<div class="section" id="faq">
+  <div class="section-label">Got Questions?</div>
+  <h2 class="section-title">Frequently Asked <em>Questions</em></h2>
+  <div class="faq-layout">
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-q">How much money do I need to start investing?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Honestly, not much. Many brokers like Robinhood and Fidelity have no minimum deposit at all. You can start with as little as $1 through fractional shares — where you buy a slice of a stock instead of a whole one. The amount matters far less than just getting started. Even small contributions add up significantly over time thanks to compounding.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-q">Is investing the same as gambling?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>They can feel similar when done recklessly, but they're fundamentally different. Gambling is a zero-sum game — one person wins, another loses. Investing in a diversified portfolio means you own pieces of real businesses that generate real value over time. The S&P 500 has never had a negative 20-year return period in history. That's not luck — that's ownership in the economy growing.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-q">When is the best time to start investing?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>The honest answer is as soon as you're financially ready. Thanks to compounding, every year you wait costs you more than you think. A 25-year-old investing $200 a month will end up with dramatically more than a 35-year-old doing the same thing — not because they invested more money, but because they had an extra decade of growth. Start early, even if the amount is small.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-q">What happens to my money if the stock market crashes?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Your portfolio value will drop — but only on paper. Unless you actually sell, you haven't lost anything permanently. Every single major market crash in history has been followed by a full recovery and eventually new all-time highs. The investors who truly got hurt were the ones who panicked and sold at the bottom. If you can stay calm and keep investing through downturns, you'll likely come out ahead.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-q">What's the difference between a stock and an ETF?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>A stock is ownership in one specific company. An ETF is a basket of many stocks bundled together into one investment. Buying an ETF like VTI gives you exposure to thousands of companies at once, which instantly spreads your risk. If one company tanks, it barely affects your overall portfolio. For most beginners, starting with ETFs is safer, simpler, and historically just as effective as picking individual stocks.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-q">Do I have to pay taxes on my investments?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Yes — when you sell an investment for a profit, you owe capital gains tax. Hold for more than a year and you pay the lower long-term rate (0–20% depending on your income). Sell sooner and it's taxed as regular income, which can be significantly higher. Dividends are also usually taxable. The good news is that accounts like a Roth IRA or 401(k) can shelter your investments from taxes entirely — worth looking into early.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-q">Should I invest if I have debt?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>It depends on the interest rate. High-interest debt like credit cards (15–25% APR) should almost always come first — it's nearly impossible to consistently earn more in the market than you're losing in interest. Lower-rate debt like student loans or a mortgage is a closer call. A common approach: contribute enough to get any employer 401(k) match (that's free money), then tackle high-interest debt aggressively before investing more.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-btn" onclick="toggleFaq(this)">
+        <span class="faq-q">How do I know which stocks to pick?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>For most beginners, the honest answer is — don't try to pick individual stocks yet. Study after study shows that even professional fund managers fail to consistently beat a simple index fund over the long term. Start with broad market ETFs, get comfortable with how investing works, and only research individual stocks once you genuinely understand how to evaluate a company's financials and business model.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- COMMON MISTAKES -->
+<hr class="section-divider">
+<div class="section" id="mistakes">
+  <div class="section-label">Learn from Others</div>
+  <h2 class="section-title">Common Beginner <em>Mistakes</em></h2>
+
+  <div class="mistakes-grid">
+    <div class="mistake-card">
+      <div class="mistake-num">Mistake 01</div>
+      <div class="mistake-title">Panic Selling</div>
+      <div class="mistake-desc">The market drops, you freak out and sell everything to "stop the bleeding." This is the single most common and costly mistake beginners make — it permanently locks in your losses and means you miss the recovery.</div>
+      <div class="mistake-fix">Make a plan before you invest and commit to holding through dips. Remind yourself that every crash has eventually recovered.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-num">Mistake 02</div>
+      <div class="mistake-title">Trying to Time the Market</div>
+      <div class="mistake-desc">Waiting for the "perfect" moment to invest — when prices are low enough. The problem is nobody, not even professionals, can consistently predict when the market will go up or down.</div>
+      <div class="mistake-fix">Use dollar cost averaging — invest a fixed amount on a regular schedule regardless of market conditions. Time in the market beats timing the market.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-num">Mistake 03</div>
+      <div class="mistake-title">Not Diversifying</div>
+      <div class="mistake-desc">Putting all your money into one stock or one sector. If that company or industry has a bad year, your entire portfolio suffers. This is avoidable risk that doesn't even come with extra reward.</div>
+      <div class="mistake-fix">Spread investments across different companies, industries, and geographies. A simple index fund does this automatically.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-num">Mistake 04</div>
+      <div class="mistake-title">FOMO Investing</div>
+      <div class="mistake-desc">Buying a hot stock because everyone is talking about it — usually after it has already gone up a lot. By the time it's on social media, the smart money has often already bought in and may be selling to you.</div>
+      <div class="mistake-fix">Never buy a stock just because it's trending. Do your own research and make sure you understand what you're buying and why.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-num">Mistake 05</div>
+      <div class="mistake-title">Ignoring Fees</div>
+      <div class="mistake-desc">A fund with a 1% annual fee vs 0.03% sounds trivial but over 30 years the difference in your final portfolio can be tens of thousands of dollars due to compounding eating into your returns.</div>
+      <div class="mistake-fix">Always check the expense ratio of any ETF or fund. Vanguard, Fidelity, and Schwab offer excellent index funds with very low fees.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-num">Mistake 06</div>
+      <div class="mistake-title">Checking Your Portfolio Every Day</div>
+      <div class="mistake-desc">Obsessively watching your portfolio leads to emotional decision-making. Short-term fluctuations are normal and meaningless for long-term investors — but they feel very real when you see them in real time.</div>
+      <div class="mistake-fix">Set a schedule to review your portfolio quarterly, not daily. Remove the apps from your home screen if you need to.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-num">Mistake 07</div>
+      <div class="mistake-title">Investing Money You Need Soon</div>
+      <div class="mistake-desc">If you need the money in under 3 years — for a house deposit, emergency, or tuition — the stock market is too risky. A market dip at the wrong time could force you to sell at a loss right when you need the cash.</div>
+      <div class="mistake-fix">Only invest money you truly won't need for at least 3–5 years. Keep short-term savings in a high-yield savings account instead.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-num">Mistake 08</div>
+      <div class="mistake-title">Skipping the Emergency Fund</div>
+      <div class="mistake-desc">Investing before having an emergency fund means one unexpected expense could force you to sell investments at the worst time, potentially locking in losses just to cover a car repair or medical bill.</div>
+      <div class="mistake-fix">Build 3–6 months of living expenses in savings before you invest a single dollar. This is your financial foundation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FULL FOOTER -->
+<div class="footer-full">
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">MoneyMind</div>
+      <div class="footer-brand-desc">MoneyMind is a free financial education resource built for beginners. No jargon, no fluff — just clear, honest explanations of how investing works and how to get started.</div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.08em;color:rgba(255,255,255,0.2);">© 2026 MoneyMind · All rights reserved</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Chapters</div>
+      <div class="footer-links">
+        <a href="#investing">What is Investing</a>
+        <a href="#terms">Key Terms</a>
+        <a href="#how-it-works">How it Works</a>
+        <a href="#navigating">Navigating</a>
+        <a href="#make-money">Making Money</a>
+        <a href="#risk">Managing Risk</a>
+        <a href="#get-started">Get Started</a>
+        <a href="#advanced">Advanced</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Tools</div>
+      <div class="footer-links">
+        <a href="#calculator">Compound Calculator</a>
+        <a href="#portfolio-builder">Portfolio Builder</a>
+        <a href="#quiz">Risk Quiz</a>
+        <a href="#game">Scenario Game</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Learn More</div>
+      <div class="footer-links">
+        <a href="#faq">FAQ</a>
+        <a href="#mistakes">Common Mistakes</a>
+        <a href="https://www.investopedia.com" target="_blank">Investopedia</a>
+        <a href="https://www.sec.gov/investor" target="_blank">SEC Investor Ed</a>
+        <a href="https://finance.yahoo.com" target="_blank">Yahoo Finance</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-left">MoneyMind · Built for beginners · Not financial advice</div>
+    <div class="footer-bottom-right">This website is for educational purposes only and does not constitute financial advice. Always conduct your own research and consult a qualified financial advisor before making investment decisions.</div>
+  </div>
+</div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Hover effects on interactive elements
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+      ring.style.transform = 'translate(-50%, -50%) scale(1.5)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+      ring.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+  });
+
+  // FAQ toggle
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const icon = btn.querySelector('.faq-icon');
+    answer.classList.toggle('open');
+    icon.classList.toggle('open');
+    icon.textContent = answer.classList.contains('open') ? '×' : '+';
+  }
+
+  // Advanced topic expandables
+  function toggleAdvanced(btn) {
+    const content = btn.nextElementSibling;
+    const icon = btn.querySelector('span:last-child');
+    content.classList.toggle('open');
+    icon.textContent = content.classList.contains('open') ? '−' : '+';
+  }
+
+  // Term card expandables
+  function toggleTerm(btn) {
+    const content = btn.nextElementSibling;
+    content.classList.toggle('open');
+    btn.textContent = content.classList.contains('open') ? '− Advanced' : '+ Advanced';
+  }
+
+  // Expandable sections
+  function toggleExpand(btn) {
+    const content = btn.nextElementSibling;
+    const icon = btn.querySelector('.expand-icon');
+    content.classList.toggle('open');
+    icon.classList.toggle('open');
+  }
+
+  // ── TEXT TO SPEECH ──
+  let ttsUtterance = null;
+  let ttsSpeaking = false;
+  let ttsPaused = false;
+  let ttsSpeed = 1.0;
+
+  function ttsTogglePanel() {
+    const panel = document.getElementById('ttsPanel');
+    panel.classList.toggle('open');
+  }
+
+  function ttsGetPageText() {
+    // Collect all readable text from sections in order
+    const sections = document.querySelectorAll('.section, .interactive-section');
+    let text = 'Welcome to MoneyMind. ';
+    sections.forEach(section => {
+      const title = section.querySelector('.section-title, h2, h3');
+      if (title) text += title.innerText.trim() + '. ';
+      const paragraphs = section.querySelectorAll('p, .term-def, .mistake-desc, .faq-answer p, .step-card-desc, .market-step-content span, .money-card p, .risk-item-desc');
+      paragraphs.forEach(p => {
+        const txt = p.innerText.trim();
+        if (txt.length > 10) text += txt + ' ';
+      });
+    });
+    return text;
+  }
+
+  function ttsPlay() {
+    if (!window.speechSynthesis) {
+      document.getElementById('ttsStatus').textContent = 'Not supported in this browser';
+      return;
+    }
+
+    if (ttsPaused && ttsUtterance) {
+      window.speechSynthesis.resume();
+      ttsPaused = false;
+      ttsSpeaking = true;
+      ttsUpdateUI();
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const text = ttsGetPageText();
+    ttsUtterance = new SpeechSynthesisUtterance(text);
+    ttsUtterance.rate = ttsSpeed;
+    ttsUtterance.pitch = 1;
+    ttsUtterance.lang = 'en-US';
+
+    // Try to pick the most natural sounding voice available
+    const voices = window.speechSynthesis.getVoices();
+
+    // Priority list — best voices first across all platforms
+    const preferredNames = [
+      // Mac / iOS (very natural)
+      'Samantha', 'Karen', 'Moira', 'Tessa', 'Veena',
+      'Daniel', 'Alex', 'Tom',
+      // Windows (natural)
+      'Microsoft Aria Online', 'Microsoft Guy Online',
+      'Microsoft Zira', 'Microsoft David',
+      // Chrome / Android
+      'Google US English', 'Google UK English Female',
+      'Google UK English Male',
+    ];
+
+    let chosenVoice = null;
+    for (const name of preferredNames) {
+      const match = voices.find(v => v.name.includes(name));
+      if (match) { chosenVoice = match; break; }
+    }
+
+    // Fallback — any en-US voice
+    if (!chosenVoice) {
+      chosenVoice = voices.find(v => v.lang === 'en-US' && !v.name.toLowerCase().includes('compact'));
+    }
+
+    // Last resort — any English voice
+    if (!chosenVoice) {
+      chosenVoice = voices.find(v => v.lang.startsWith('en'));
+    }
+
+    if (chosenVoice) {
+      ttsUtterance.voice = chosenVoice;
+      document.getElementById('ttsStatus').textContent = `Reading with ${chosenVoice.name.split(' ').slice(0,2).join(' ')}...`;
+    }
+
+    ttsUtterance.onstart = () => {
+      ttsSpeaking = true;
+      ttsPaused = false;
+      ttsUpdateUI();
+    };
+
+    ttsUtterance.onend = () => {
+      ttsSpeaking = false;
+      ttsPaused = false;
+      ttsUpdateUI();
+      document.getElementById('ttsStatus').textContent = 'Finished reading';
+    };
+
+    ttsUtterance.onerror = () => {
+      ttsSpeaking = false;
+      document.getElementById('ttsStatus').textContent = 'Something went wrong';
+      ttsUpdateUI();
+    };
+
+    window.speechSynthesis.speak(ttsUtterance);
+  }
+
+  function ttsPause() {
+    if (!window.speechSynthesis) return;
+    if (ttsSpeaking && !ttsPaused) {
+      window.speechSynthesis.pause();
+      ttsPaused = true;
+      ttsSpeaking = false;
+      document.getElementById('ttsStatus').textContent = 'Paused';
+      ttsUpdateUI();
+    }
+  }
+
+  function ttsStop() {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    ttsSpeaking = false;
+    ttsPaused = false;
+    ttsUtterance = null;
+    document.getElementById('ttsStatus').textContent = 'Click Play to start reading';
+    ttsUpdateUI();
+  }
+
+  function ttsUpdateSpeed() {
+    const slider = document.getElementById('ttsSpeedSlider');
+    ttsSpeed = parseFloat(slider.value);
+    document.getElementById('ttsSpeedVal').textContent = ttsSpeed.toFixed(1) + 'x';
+    if (ttsUtterance) ttsUtterance.rate = ttsSpeed;
+  }
+
+  function ttsUpdateUI() {
+    const toggle = document.getElementById('ttsToggle');
+    const playBtn = document.getElementById('ttsPlay');
+    const pauseBtn = document.getElementById('ttsPause');
+    if (ttsSpeaking) {
+      toggle.classList.add('speaking');
+      toggle.textContent = '🔊';
+      playBtn.classList.remove('active');
+      pauseBtn.classList.add('active');
+    } else if (ttsPaused) {
+      toggle.classList.remove('speaking');
+      toggle.textContent = '🔊';
+      playBtn.classList.add('active');
+      pauseBtn.classList.remove('active');
+    } else {
+      toggle.classList.remove('speaking');
+      toggle.textContent = '🔊';
+      playBtn.classList.remove('active');
+      pauseBtn.classList.remove('active');
+    }
+  }
+
+  // Load voices once available
+  if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+  function drawAllCharts() {
+    drawBullBear();
+    drawCandlestick();
+    drawVolume();
+    drawOrders();
+  }
+
+  function setupCanvas(id, aspectRatio) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return null;
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.parentElement.clientWidth - 32;
+    const h = w * aspectRatio;
+    // Set actual pixel size scaled by DPR for sharpness
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    // Keep CSS display size the same
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    const ctx = canvas.getContext('2d');
+    // Scale all drawing operations up by DPR
+    ctx.scale(dpr, dpr);
+    return ctx;
+  }
+
+  function drawBullBear() {
+    const ctx = setupCanvas('bullBearChart', 0.38);
+    if (!ctx) return;
+    const W = ctx.canvas.width, H = ctx.canvas.height;
+    const pad = { l: W*0.06, r: W*0.04, t: H*0.18, b: H*0.18 };
+    const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+    const f = s => s * (W / 700);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#fafafa';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = '#eeeeee'; ctx.lineWidth = 1;
+    [0.25, 0.5, 0.75].forEach(r => {
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t + ch*r); ctx.lineTo(pad.l+cw, pad.t + ch*r); ctx.stroke();
+    });
+
+    // Points normalized
+    const bearPts = [[0,.35],[.1,.45],[.2,.55],[.3,.7],[.4,.82],[.5,.9],[.55,.95]];
+    const recPts = [[.55,.95],[.62,.88],[.66,.82]];
+    const bullPts = [[.66,.82],[.73,.68],[.8,.53],[.87,.35],[.93,.18],[1,.08]];
+
+    function toXY(px, py) { return [pad.l + px*cw, pad.t + py*ch]; }
+
+    // Fill areas
+    ctx.beginPath();
+    bearPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.lineTo(pad.l+bearPts[bearPts.length-1][0]*cw, pad.t+ch); ctx.lineTo(pad.l, pad.t+ch); ctx.closePath();
+    ctx.fillStyle = 'rgba(220,38,38,0.06)'; ctx.fill();
+
+    ctx.beginPath();
+    bullPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.lineTo(pad.l+cw, pad.t+ch); ctx.lineTo(pad.l+bullPts[0][0]*cw, pad.t+ch); ctx.closePath();
+    ctx.fillStyle = 'rgba(22,163,74,0.06)'; ctx.fill();
+
+    // Divider
+    const divX = pad.l + 0.62*cw;
+    ctx.setLineDash([f(5),f(3)]); ctx.strokeStyle = '#ddd'; ctx.lineWidth = f(1.5);
+    ctx.beginPath(); ctx.moveTo(divX, pad.t-H*0.05); ctx.lineTo(divX, pad.t+ch); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Recovery dashed
+    ctx.setLineDash([f(5),f(3)]); ctx.strokeStyle = '#aaa'; ctx.lineWidth = f(2);
+    ctx.beginPath();
+    recPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // Bear line
+    ctx.strokeStyle = '#dc2626'; ctx.lineWidth = f(2.5); ctx.lineJoin = 'round';
+    ctx.beginPath();
+    bearPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+
+    // Bull line
+    ctx.strokeStyle = '#16a34a'; ctx.lineWidth = f(2.5);
+    ctx.beginPath();
+    bullPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+
+    // Labels
+    const fs = Math.max(9, f(11));
+    const fsSmall = Math.max(8, f(9));
+
+    // Bear label badge
+    const [bx,] = toXY(0.15, 0);
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath(); ctx.roundRect(pad.l+f(5), pad.t-H*0.14, f(100), H*0.1, 2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText('BEAR MARKET', pad.l+f(55), pad.t-H*0.065);
+    ctx.fillStyle = '#dc2626'; ctx.font = `${fsSmall}px monospace`;
+    ctx.fillText('Prices falling 20%+', pad.l+f(55), pad.t+H*0.06);
+
+    // Bull label badge
+    ctx.fillStyle = '#16a34a';
+    ctx.beginPath(); ctx.roundRect(pad.l+cw-f(105), pad.t-H*0.14, f(100), H*0.1, 2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText('BULL MARKET', pad.l+cw-f(55), pad.t-H*0.065);
+    ctx.fillStyle = '#16a34a'; ctx.font = `${fsSmall}px monospace`;
+    ctx.fillText('Prices rising 20%+', pad.l+cw-f(55), pad.t+H*0.06);
+
+    // Bottom labels
+    ctx.fillStyle = '#aaa'; ctx.font = `${fsSmall}px monospace`; ctx.textAlign = 'center';
+    ctx.fillText('Avg: 9–18 months', pad.l+cw*0.27, pad.t+ch+H*0.12);
+    ctx.fillText('Avg: 4+ years', pad.l+cw*0.83, pad.t+ch+H*0.12);
+
+    // Dots
+    const [botX, botY] = toXY(0.55, 0.95);
+    ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(botX, botY, f(4), 0, Math.PI*2); ctx.fill();
+    const [peakX, peakY] = toXY(1, 0.08);
+    ctx.fillStyle = '#16a34a'; ctx.beginPath(); ctx.arc(peakX, peakY, f(4), 0, Math.PI*2); ctx.fill();
+  }
+
+  function drawCandlestick() {
+    const ctx = setupCanvas('candlestickChart', 0.45);
+    if (!ctx) return;
+    const W = ctx.canvas.width, H = ctx.canvas.height;
+    const f = s => s * (W / 700);
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#fafafa'; ctx.fillRect(0, 0, W, H);
+
+    const fs = Math.max(9, f(11));
+    const fsTiny = Math.max(7, f(9));
+
+    // BULLISH candle
+    const bx = W * 0.18, by_high = H*0.12, by_close = H*0.30, by_open = H*0.65, by_low = H*0.85;
+    const bw = W * 0.07;
+    ctx.strokeStyle = '#16a34a'; ctx.lineWidth = f(2);
+    ctx.beginPath(); ctx.moveTo(bx, by_high); ctx.lineTo(bx, by_low); ctx.stroke();
+    ctx.fillStyle = '#16a34a';
+    ctx.beginPath(); ctx.roundRect(bx-bw/2, by_close, bw, by_open-by_close, 2); ctx.fill();
+
+    // Bullish labels
+    const labelLines = (x, y, lines, colors) => {
+      lines.forEach((line, i) => {
+        ctx.fillStyle = colors[i] || '#555';
+        ctx.font = `${fsTiny}px monospace`;
+        ctx.textAlign = 'left';
+        ctx.fillText(line, x, y + i * (fsTiny + 3));
+      });
+    };
+
+    const lx = bx + bw/2 + f(12);
+    ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+    [[by_high,'#555','HIGH — Highest price'],[by_close,'#16a34a','CLOSE — Price ended here (up)'],[by_open,'#16a34a','OPEN — Price started here'],[by_low,'#555','LOW — Lowest price']].forEach(([y, color, label]) => {
+      ctx.beginPath(); ctx.moveTo(bx+bw/2, y); ctx.lineTo(lx-f(4), y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = color; ctx.font = `${fsTiny}px monospace`; ctx.textAlign = 'left';
+      ctx.fillText(label, lx, y + fsTiny*0.35);
+      ctx.setLineDash([3,3]);
+    });
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#16a34a'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText('BULLISH', bx, H*0.94);
+    ctx.fillStyle = '#888'; ctx.font = `${fsTiny}px monospace`;
+    ctx.fillText('Price went UP', bx, H*0.94 + fsTiny + 3);
+
+    // BEARISH candle
+    const rx = W * 0.78, ry_high = H*0.10, ry_open = H*0.28, ry_close = H*0.68, ry_low = H*0.87;
+    const rw = W * 0.07;
+    ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = f(2);
+    ctx.beginPath(); ctx.moveTo(rx, ry_high); ctx.lineTo(rx, ry_low); ctx.stroke();
+    ctx.fillStyle = '#0a0a0a';
+    ctx.beginPath(); ctx.roundRect(rx-rw/2, ry_open, rw, ry_close-ry_open, 2); ctx.fill();
+
+    // Bearish labels (right side, labels to left)
+    const rlx = rx - rw/2 - f(12);
+    ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+    [[ry_high,'#555','HIGH'],[ry_open,'#333','OPEN — Price started (bearish)'],[ry_close,'#333','CLOSE — Price ended (lower)'],[ry_low,'#555','LOW']].forEach(([y, color, label]) => {
+      ctx.beginPath(); ctx.moveTo(rx-rw/2, y); ctx.lineTo(rlx+f(4), y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = color; ctx.font = `${fsTiny}px monospace`; ctx.textAlign = 'right';
+      ctx.fillText(label, rlx, y + fsTiny*0.35);
+      ctx.setLineDash([3,3]);
+    });
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#0a0a0a'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText('BEARISH', rx, H*0.94);
+    ctx.fillStyle = '#888'; ctx.font = `${fsTiny}px monospace`;
+    ctx.fillText('Price went DOWN', rx, H*0.94 + fsTiny + 3);
+  }
+
+  function drawVolume() {
+    const ctx = setupCanvas('volumeChart', 0.38);
+    if (!ctx) return;
+    const W = ctx.canvas.width, H = ctx.canvas.height;
+    const f = s => s * (W/700);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#fafafa'; ctx.fillRect(0,0,W,H);
+
+    const priceH = H * 0.62, volY = H * 0.68, volH = H * 0.22;
+    const pts = [[0.04,0.85],[0.14,0.72],[0.24,0.68],[0.34,0.58],[0.44,0.62],[0.54,0.38],[0.64,0.22],[0.74,0.08],[0.84,0.35],[0.91,0.55],[0.97,0.50]];
+    const vols = [0.25,0.28,0.26,0.30,0.27,0.55,0.70,0.95,0.30,0.28,0.25];
+
+    // Price fill
+    ctx.beginPath();
+    pts.forEach(([px,py],i) => { const x=px*W, y=py*priceH; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.lineTo(pts[pts.length-1][0]*W, priceH); ctx.lineTo(pts[0][0]*W, priceH); ctx.closePath();
+    ctx.fillStyle = 'rgba(0,0,0,0.04)'; ctx.fill();
+
+    // Price line
+    ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = f(2); ctx.lineJoin = 'round';
+    ctx.beginPath();
+    pts.forEach(([px,py],i) => { const x=px*W, y=py*priceH; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+
+    // Divider
+    ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, volY); ctx.lineTo(W, volY); ctx.stroke();
+
+    // Volume bars
+    const bw = W * 0.055;
+    pts.forEach(([px], i) => {
+      const x = px*W - bw/2;
+      const bh = vols[i] * volH;
+      const isSpike = vols[i] > 0.5;
+      ctx.fillStyle = isSpike ? '#0a0a0a' : '#ccc';
+      ctx.beginPath(); ctx.roundRect(x, volY + volH - bh, bw, bh, 1); ctx.fill();
+    });
+
+    // Labels
+    const fs = Math.max(8, f(10));
+    ctx.fillStyle = '#aaa'; ctx.font = `${fs}px monospace`; ctx.textAlign = 'left';
+    ctx.fillText('PRICE', f(5), priceH * 0.15);
+    ctx.fillText('VOL', f(5), volY + fs + 2);
+
+    // Spike annotation
+    const spikeX = pts[7][0]*W;
+    ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = f(1.5); ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(spikeX, volY - f(5)); ctx.lineTo(spikeX, priceH*0.22); ctx.stroke();
+    ctx.setLineDash([]);
+    const boxW = Math.min(W*0.42, f(220)), boxH = H*0.13;
+    const boxX = Math.min(spikeX - boxW/2, W - boxW - f(5));
+    ctx.fillStyle = '#0a0a0a';
+    ctx.beginPath(); ctx.roundRect(Math.max(f(5), boxX), priceH*0.06, boxW, boxH, 2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = `bold ${fs}px monospace`; ctx.textAlign = 'center';
+    ctx.fillText('VOLUME SPIKE', Math.max(f(5), boxX) + boxW/2, priceH*0.06 + boxH*0.45);
+    ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.font = `${Math.max(7,f(8.5))}px monospace`;
+    ctx.fillText('Big move confirmed by high volume', Math.max(f(5), boxX) + boxW/2, priceH*0.06 + boxH*0.85);
+
+    // Low volume annotation
+    ctx.fillStyle = '#aaa'; ctx.font = `${fs}px monospace`; ctx.textAlign = 'center';
+    ctx.fillText('Low vol = less significant', pts[2][0]*W, H*0.97);
+  }
+
+  function drawOrders() {
+    const ctx = setupCanvas('orderChart', 0.38);
+    if (!ctx) return;
+    const W = ctx.canvas.width, H = ctx.canvas.height;
+    const f = s => s*(W/700);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#fafafa'; ctx.fillRect(0,0,W,H);
+
+    const pad = {l:W*0.08, r:W*0.03, t:H*0.12, b:H*0.12};
+    const cw = W-pad.l-pad.r, ch = H-pad.t-pad.b;
+    const fs = Math.max(8, f(10));
+
+    // Grid
+    ctx.strokeStyle = '#eeeeee'; ctx.lineWidth = 1;
+    [0.25,0.5,0.75].forEach(r => {
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t+ch*r); ctx.lineTo(pad.l+cw, pad.t+ch*r); ctx.stroke();
+    });
+
+    // Y labels
+    const prices = ['$120','$100','$80','$60'];
+    prices.forEach((p,i) => {
+      ctx.fillStyle='#aaa'; ctx.font=`${fs}px monospace`; ctx.textAlign='right';
+      ctx.fillText(p, pad.l-f(4), pad.t + ch*(i/3) + fs*0.35);
+    });
+
+    // Price line
+    const pPts = [[0,0.82],[0.13,0.72],[0.26,0.60],[0.4,0.44],[0.5,0.30],[0.6,0.14],[0.68,0.30],[0.77,0.50],[0.87,0.62],[0.97,0.56]];
+    ctx.strokeStyle='#0a0a0a'; ctx.lineWidth=f(2.5); ctx.lineJoin='round';
+    ctx.beginPath();
+    pPts.forEach(([px,py],i) => { const x=pad.l+px*cw, y=pad.t+py*ch; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+
+    // Current price dot at peak
+    const cpX = pad.l+0.6*cw, cpY = pad.t+0.14*ch;
+    ctx.fillStyle='#0a0a0a'; ctx.beginPath(); ctx.arc(cpX,cpY,f(4),0,Math.PI*2); ctx.fill();
+
+    // MARKET ORDER - vertical dashed line
+    ctx.strokeStyle='#0a0a0a'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(5),f(3)]);
+    ctx.beginPath(); ctx.moveTo(cpX, cpY); ctx.lineTo(cpX, pad.t+ch); ctx.stroke();
+    ctx.setLineDash([]);
+    const moW = Math.min(f(130), cw*0.22);
+    ctx.fillStyle='#0a0a0a';
+    ctx.beginPath(); ctx.roundRect(cpX+f(5), cpY-f(10), moW, f(18), 2); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font=`${fs}px monospace`; ctx.textAlign='left';
+    ctx.fillText('MARKET ORDER', cpX+f(8), cpY+f(3));
+
+    // LIMIT ORDER - horizontal dashed line at mid price
+    const loY = pad.t + ch*0.52;
+    ctx.strokeStyle='#555'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(6),f(3)]);
+    ctx.beginPath(); ctx.moveTo(pad.l, loY); ctx.lineTo(pad.l+cw, loY); ctx.stroke();
+    ctx.setLineDash([]);
+    const loW = Math.min(f(150), cw*0.28);
+    ctx.fillStyle='#555';
+    ctx.beginPath(); ctx.roundRect(pad.l+f(5), loY-f(10), loW, f(18), 2); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font=`${fs}px monospace`; ctx.textAlign='left';
+    ctx.fillText('LIMIT ORDER · $90', pad.l+f(8), loY+f(3));
+
+    // STOP LOSS - horizontal dashed line lower
+    const slY = pad.t + ch*0.76;
+    ctx.strokeStyle='#dc2626'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(6),f(3)]);
+    ctx.beginPath(); ctx.moveTo(pad.l, slY); ctx.lineTo(pad.l+cw, slY); ctx.stroke();
+    ctx.setLineDash([]);
+    const slW = Math.min(f(165), cw*0.30);
+    ctx.fillStyle='#dc2626';
+    ctx.beginPath(); ctx.roundRect(pad.l+f(5), slY-f(10), slW, f(18), 2); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font=`${fs}px monospace`; ctx.textAlign='left';
+    ctx.fillText('STOP LOSS · sell at $75', pad.l+f(8), slY+f(3));
+
+    // X axis label
+    ctx.fillStyle='#aaa'; ctx.font=`${fs}px monospace`; ctx.textAlign='center';
+    ctx.fillText('Time →', pad.l+cw/2, pad.t+ch+H*0.09);
+  }
+
+  drawAllCharts();
+  window.addEventListener('resize', drawAllCharts);
+  function updateCalc() {
+    const amount = +document.getElementById('calcAmount').value;
+    const rate = +document.getElementById('calcRate').value / 100;
+    const years = +document.getElementById('calcYears').value;
+    const monthly = +document.getElementById('calcMonthly').value;
+
+    document.getElementById('calcAmountVal').textContent = '$' + amount.toLocaleString();
+    document.getElementById('calcRateVal').textContent = (rate * 100).toFixed(1) + '%';
+    document.getElementById('calcYearsVal').textContent = years + ' yrs';
+    document.getElementById('calcMonthlyVal').textContent = '$' + monthly.toLocaleString();
+
+    let value = amount;
+    let totalContributed = amount;
+    for (let y = 0; y < years; y++) {
+      value = value * (1 + rate) + monthly * 12;
+      totalContributed += monthly * 12;
+    }
+
+    const growth = value - totalContributed;
+    document.getElementById('calcFinal').textContent = '$' + Math.round(value).toLocaleString();
+    document.getElementById('calcSubtext').textContent = 'After ' + years + ' years at ' + (rate * 100).toFixed(1) + '% return';
+    document.getElementById('calcInvested').textContent = '$' + Math.round(totalContributed).toLocaleString();
+    document.getElementById('calcGrowth').textContent = '$' + Math.round(growth).toLocaleString();
+    document.getElementById('calcMultiplier').textContent = (value / amount).toFixed(1) + 'x';
+  }
+  updateCalc();
+
+  // ── PORTFOLIO BUILDER ──
+  const assetColors = ['#0a0a0a', '#555', '#999', '#ccc', '#e0e0d8'];
+  const assetNames = ['US Stocks', 'Intl Stocks', 'Bonds', 'REITs', 'Cash'];
+
+  function updatePortfolio() {
+    const sliders = document.querySelectorAll('#assetSliders input[type="range"]');
+    const values = Array.from(sliders).map(s => +s.value);
+    const total = values.reduce((a, b) => a + b, 0);
+
+    values.forEach((v, i) => {
+      document.getElementById('pct' + i).textContent = v + '%';
+    });
+
+    const totalEl = document.getElementById('portfolioTotal');
+    totalEl.textContent = 'Total: ' + total + '%';
+    totalEl.className = 'portfolio-total ' + (total === 100 ? 'ok' : 'over');
+
+    drawDonut(values, total);
+    drawLegend(values, total);
+  }
+
+  function drawDonut(values, total) {
+    const canvas = document.getElementById('donutChart');
+    const ctx = canvas.getContext('2d');
+    const cx = 110, cy = 110, r = 80, innerR = 52;
+    ctx.clearRect(0, 0, 220, 220);
+
+    if (total === 0) return;
+
+    let angle = -Math.PI / 2;
+    values.forEach((v, i) => {
+      if (v === 0) return;
+      const slice = (v / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, angle, angle + slice);
+      ctx.closePath();
+      ctx.fillStyle = assetColors[i];
+      ctx.fill();
+      angle += slice;
+    });
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 22px "Bebas Neue"';
+    ctx.textAlign = 'center';
+    ctx.fillText(total + '%', cx, cy + 4);
+    ctx.font = '10px "DM Mono"';
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillText('ALLOCATED', cx, cy + 18);
+  }
+
+  function drawLegend(values, total) {
+    const legend = document.getElementById('portfolioLegend');
+    legend.innerHTML = values.map((v, i) => `
+      <div class="portfolio-legend-row">
+        <div class="portfolio-legend-dot" style="background:${assetColors[i]}"></div>
+        <span>${assetNames[i]}</span>
+        <span>${v}%</span>
+      </div>
+    `).join('');
+  }
+  updatePortfolio();
+
+  // ── RISK TOLERANCE QUIZ ──
+  const quizQuestions = [
+    {
+      q: "Your portfolio drops 25% in one month due to a market crash. What do you do?",
+      options: ["Sell everything immediately", "Sell some to reduce exposure", "Hold and wait it out", "Buy more — it's on sale"],
+      scores: [0, 1, 2, 3]
+    },
+    {
+      q: "How long do you plan to keep your money invested before needing it?",
+      options: ["Less than 2 years", "2–5 years", "5–10 years", "10+ years"],
+      scores: [0, 1, 2, 3]
+    },
+    {
+      q: "Which describes your investment goal best?",
+      options: ["Preserve what I have — safety first", "Slow steady growth with low risk", "Balance of growth and security", "Maximum growth, I can handle volatility"],
+      scores: [0, 1, 2, 3]
+    },
+    {
+      q: "How would you feel if your $10,000 investment became $7,000 temporarily?",
+      options: ["Extremely stressed — I'd lose sleep", "Worried but I'd manage", "Uncomfortable but not panicked", "Fine — it'll recover"],
+      scores: [0, 1, 2, 3]
+    },
+    {
+      q: "Which investment would you prefer?",
+      options: ["Guaranteed 3% return every year", "Usually 7%, sometimes -5%", "Usually 10%, sometimes -15%", "Usually 15%, sometimes -30%"],
+      scores: [0, 1, 2, 3]
+    }
+  ];
+
+  const quizResults = [
+    {
+      type: "Conservative Investor",
+      desc: "You prioritize safety over growth. You prefer predictable, stable returns and don't handle volatility well. That's completely valid — protecting what you have is a legitimate strategy.",
+      recs: ["Focus on bonds and bond ETFs (e.g. BND)", "Keep 3–6 months in a high-yield savings account", "Consider a 70% bonds / 30% stocks allocation", "Avoid individual stocks — stick to diversified funds"]
+    },
+    {
+      type: "Moderate Investor",
+      desc: "You want growth but not at the cost of major stress. You can handle some ups and downs as long as the long-term trend is positive. A balanced approach works well for you.",
+      recs: ["A 60% stocks / 40% bonds split is a classic starting point", "Consider a target-date fund matching your retirement year", "Index funds like VTI or VOO are great core holdings", "Rebalance your portfolio once a year"]
+    },
+    {
+      type: "Growth Investor",
+      desc: "You're comfortable with risk and focused on long-term wealth building. Short-term drops don't scare you — you see them as opportunities. You're built for the stock market.",
+      recs: ["Lean heavily into broad market ETFs (VTI, SPY, QQQ)", "Consider a 80% stocks / 20% bonds allocation", "Dollar-cost average — invest the same amount every month", "Stay invested during downturns — don't try to time the market"]
+    },
+    {
+      type: "Aggressive Investor",
+      desc: "You're a high-risk, high-reward investor. You have a long time horizon and strong stomach for volatility. You're chasing maximum returns and you know losses are part of the game.",
+      recs: ["100% equities is reasonable for your profile", "Consider growth ETFs and individual stock research", "Emerging markets and small-cap stocks may appeal to you", "Make sure you have an emergency fund before going all-in"]
+    }
+  ];
+
+  let currentQ = 0;
+  let quizScores = [];
+  let selectedOption = null;
+
+  function renderQuestion() {
+    const q = quizQuestions[currentQ];
+    document.getElementById('quizQuestion').textContent = q.q;
+    document.getElementById('quizCounter').textContent = (currentQ + 1) + ' / ' + quizQuestions.length;
+
+    const bars = document.querySelectorAll('.quiz-progress-bar');
+    bars.forEach((b, i) => b.classList.toggle('active', i <= currentQ));
+
+    const optionsEl = document.getElementById('quizOptions');
+    optionsEl.innerHTML = q.options.map((opt, i) => `
+      <button class="quiz-option" onclick="selectOption(this, ${i})">${opt}</button>
+    `).join('');
+
+    document.getElementById('quizNext').style.display = 'none';
+    selectedOption = null;
+  }
+
+  function selectOption(btn, idx) {
+    document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedOption = idx;
+    document.getElementById('quizNext').style.display = 'inline-flex';
+  }
+
+  function nextQuestion() {
+    if (selectedOption === null) return;
+    quizScores.push(quizQuestions[currentQ].scores[selectedOption]);
+    currentQ++;
+    if (currentQ < quizQuestions.length) {
+      renderQuestion();
+    } else {
+      showQuizResult();
+    }
+  }
+
+  function showQuizResult() {
+    const total = quizScores.reduce((a, b) => a + b, 0);
+    const max = quizQuestions.length * 3;
+    const pct = total / max;
+    let resultIdx = pct < 0.25 ? 0 : pct < 0.5 ? 1 : pct < 0.75 ? 2 : 3;
+    const result = quizResults[resultIdx];
+
+    document.getElementById('quizArea').style.display = 'none';
+    const resultEl = document.getElementById('quizResult');
+    resultEl.classList.add('show');
+    document.getElementById('resultType').textContent = result.type;
+    document.getElementById('resultDesc').textContent = result.desc;
+    document.getElementById('resultRecs').innerHTML = result.recs.map(r => `<div class="quiz-result-rec">${r}</div>`).join('');
+  }
+
+  function restartQuiz() {
+    currentQ = 0;
+    quizScores = [];
+    selectedOption = null;
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('quizResult').classList.remove('show');
+    renderQuestion();
+  }
+
+  renderQuestion();
+
+  // ── MARKET SCENARIO GAME ──
+  const scenarios = [
+    {
+      company: "TECHCO INC",
+      text: "A major tech company just reported earnings 40% above expectations. Their new AI product is selling faster than anyone predicted. The stock is up 8% today.",
+      choices: ["Buy — momentum is strong", "Hold — already priced in", "Sell — take profits now"],
+      correct: 1,
+      feedback: { correct: "Smart move. Strong earnings are often already priced into the stock by the time you hear about them. Buying after a big jump is risky.", wrong: "A common beginner mistake. By the time news is public, the market has usually already reacted. 'Buy the rumor, sell the news' is a classic saying." },
+      impact: [80, -30, 20]
+    },
+    {
+      company: "PHARMA CO",
+      text: "A pharmaceutical company's drug trial just failed. Their stock dropped 60% overnight. Some analysts say the company still has two other promising drugs in the pipeline.",
+      choices: ["Buy the dip — huge upside", "Hold if you own it", "Sell immediately"],
+      correct: 0,
+      feedback: { correct: "Bold but potentially correct. When a stock drops this much, the remaining pipeline may offer real upside — but only if you can afford the risk.", wrong: "Not wrong — company risk is real. Holding a fallen stock is emotionally tough and the remaining pipeline is uncertain." },
+      impact: [150, -20, 30]
+    },
+    {
+      company: "S&P 500",
+      text: "The entire stock market just dropped 20% in one month. Headlines read 'Worst crash since 2008.' Your portfolio is down significantly. Everyone on social media is saying to sell.",
+      choices: ["Sell everything — limit losses", "Hold — stay the course", "Buy more — use it as an opportunity"],
+      correct: 2,
+      feedback: { correct: "This is the hardest move emotionally, but historically the right one. Every major crash has been followed by a recovery. Time in the market beats timing the market.", wrong: "Panic selling locks in your losses permanently. Those who sold in 2008 missed the recovery. Long-term investors who held were rewarded." },
+      impact: [-500, 200, 600]
+    },
+    {
+      company: "MEME STOCK",
+      text: "A struggling video game retailer's stock is up 400% this week because of social media hype. Friends are posting huge gains. You've never looked at this company's financials.",
+      choices: ["Buy in — FOMO is real", "Buy a small amount to participate", "Avoid — no fundamental basis"],
+      correct: 2,
+      feedback: { correct: "Disciplined and correct. Meme stocks are driven by momentum and social pressure, not fundamentals. Most who buy late end up holding the bag.", wrong: "FOMO investing is one of the most common ways beginners lose money. When everyone is excited about a stock, the smart money is usually already exiting." },
+      impact: [-800, -200, 0]
+    },
+    {
+      company: "YOUR PORTFOLIO",
+      text: "You've been investing consistently for 3 years. The market has been flat for 6 months and you're seeing no gains. A friend suggests switching to day trading to make faster money.",
+      choices: ["Switch to day trading", "Stay the course, keep investing", "Pause investing until market moves"],
+      correct: 1,
+      feedback: { correct: "The right call every time. Over 90% of day traders lose money. Consistent long-term investing in index funds outperforms almost every other strategy.", wrong: "Day trading sounds exciting but statistically, the vast majority of day traders underperform a simple index fund strategy after fees and taxes." },
+      impact: [-300, 100, -50]
+    },
+    {
+      company: "DIVIDEND STOCK",
+      text: "A company you own has been paying a 5% dividend for years. They just announced they're cutting the dividend to invest in growth. The stock drops 10%.",
+      choices: ["Sell — no more dividend income", "Hold — growth investment could pay off", "Buy more at the discount"],
+      correct: 1,
+      feedback: { correct: "Thoughtful move. Reinvesting dividends into growth can create more long-term value than paying them out. Evaluate the company's growth plan before deciding.", wrong: "Reacting to a dividend cut without understanding why is a common mistake. The question is whether the growth plan makes sense — not just that the dividend is gone." },
+      impact: [-100, 150, 200]
+    }
+  ];
+
+  let gameRound = 0;
+  let gamePortfolio = 10000;
+  let gameCorrect = 0;
+  let gameAnswered = false;
+
+  function renderGame() {
+    if (gameRound >= scenarios.length) {
+      endGame();
+      return;
+    }
+    gameAnswered = false;
+    const s = scenarios[gameRound];
+    document.getElementById('gameCompany').textContent = s.company;
+    document.getElementById('gameRound').textContent = 'Round ' + (gameRound + 1) + ' of ' + scenarios.length;
+    document.getElementById('gameText').textContent = s.text;
+    document.getElementById('gameFeedback').className = 'game-feedback';
+    document.getElementById('gameFeedback').innerHTML = '';
+
+    const choicesEl = document.getElementById('gameChoices');
+    choicesEl.innerHTML = s.choices.map((c, i) => `
+      <button class="game-choice" onclick="makeChoice(${i})">
+        <div class="game-choice-label">Option ${String.fromCharCode(65 + i)}</div>
+        <div class="game-choice-text">${c}</div>
+      </button>
+    `).join('');
+  }
+
+  function makeChoice(idx) {
+    if (gameAnswered) return;
+    gameAnswered = true;
+    const s = scenarios[gameRound];
+    const isCorrect = idx === s.correct;
+    const impact = s.impact[idx];
+
+    gamePortfolio = Math.max(0, gamePortfolio + impact);
+    if (isCorrect) gameCorrect++;
+
+    document.querySelectorAll('.game-choice').forEach((btn, i) => {
+      if (i === s.correct) btn.classList.add('correct');
+      else if (i === idx && !isCorrect) btn.classList.add('wrong');
+      btn.style.pointerEvents = 'none';
+    });
+
+    const fb = document.getElementById('gameFeedback');
+    fb.className = 'game-feedback show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+    fb.innerHTML = (isCorrect ? '✓ Good call! ' : '✗ Tough one. ') + (isCorrect ? s.feedback.correct : s.feedback.wrong) +
+      ` <strong>Portfolio impact: ${impact >= 0 ? '+' : ''}$${impact.toLocaleString()}</strong>`;
+
+    const changeEl = document.getElementById('gameChange');
+    changeEl.textContent = (impact >= 0 ? '+' : '') + '$' + impact.toLocaleString();
+    changeEl.className = 'game-stat-value ' + (impact >= 0 ? 'up' : 'down');
+    document.getElementById('gamePortfolio').textContent = '$' + gamePortfolio.toLocaleString();
+    document.getElementById('gameScore').textContent = gameCorrect + ' / ' + (gameRound + 1);
+
+    setTimeout(() => {
+      gameRound++;
+      renderGame();
+    }, 2800);
+  }
+
+  function endGame() {
+    document.getElementById('gameScenario').style.display = 'none';
+    const over = document.getElementById('gameOver');
+    over.style.display = 'block';
+    const pct = gameCorrect / scenarios.length;
+    let title, desc;
+    if (pct >= 0.8) { title = 'Outstanding Investor!'; desc = 'You made smart, disciplined decisions. Your instincts are solid — keep learning and you\'ll do well.'; }
+    else if (pct >= 0.6) { title = 'Good Instincts!'; desc = 'You got most of the important calls right. A few more lessons and you\'ll be thinking like a pro.'; }
+    else if (pct >= 0.4) { title = 'Learning in Progress'; desc = 'Some tough calls in there. The market is hard to predict — the key is to keep learning and avoid emotional decisions.'; }
+    else { title = 'Keep Studying!'; desc = 'The market tested you hard. Don\'t worry — every investor makes mistakes. Go back through the chapters and try again.'; }
+    document.getElementById('gameOverTitle').textContent = title;
+    document.getElementById('gameOverDesc').textContent = desc + ' Final portfolio: $' + gamePortfolio.toLocaleString() + ' · Score: ' + gameCorrect + '/' + scenarios.length;
+  }
+
+  function restartGame() {
+    gameRound = 0;
+    gamePortfolio = 10000;
+    gameCorrect = 0;
+    gameAnswered = false;
+    document.getElementById('gameScenario').style.display = 'block';
+    document.getElementById('gameOver').style.display = 'none';
+    document.getElementById('gamePortfolio').textContent = '$10,000';
+    document.getElementById('gameChange').textContent = '—';
+    document.getElementById('gameChange').className = 'game-stat-value';
+    document.getElementById('gameScore').textContent = '0 / 0';
+    renderGame();
+  }
+
+  restartGame();
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.content-block, .terms-grid, .market-layout, .market-steps, .money-grid, .risk-layout, .steps-layout').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    observer.observe(el);
+  });
+
+</script>
+</body>
+</html>
