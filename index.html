@@ -1526,6 +1526,61 @@
   .footer-bottom-left { font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.06em; color:rgba(255,255,255,0.25); }
   .footer-bottom-right { font-size:0.7rem; color:rgba(255,255,255,0.25); max-width:400px; text-align:right; line-height:1.5; }
 
+  /* GEOMETRIC DIVIDERS */
+  .geo-divider {
+    width: 100%;
+    height: 60px;
+    display: block;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .geo-divider canvas {
+    width: 100% !important;
+    height: 60px !important;
+    display: block;
+  }
+
+  /* SECTION BACKGROUND PATTERNS */
+  .section, .interactive-section {
+    position: relative;
+  }
+
+  .section::before, .interactive-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 1;
+  }
+
+  .section > *, .interactive-section > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Alternating section backgrounds */
+  .section:nth-child(odd) {
+    background: var(--white);
+  }
+
+  .section:nth-child(even) {
+    background: #f0efe9;
+  }
+
+  /* Subtle dot pattern on even sections */
+  .section:nth-child(even)::before {
+    background-image: radial-gradient(rgba(201,168,76,0.12) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Subtle line pattern on odd sections */
+  .section:nth-child(odd)::before {
+    background-image: linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px);
+    background-size: 100% 28px;
+  }
+
   /* MOBILE RESPONSIVE */
   @media (max-width: 768px) {
     nav { padding:1rem 1.2rem; }
@@ -1695,9 +1750,320 @@
     .tts-widget { bottom: 1rem; right: 1rem; }
     .tts-panel { min-width: 180px; }
   }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), #f0d080);
+    z-index: 9999;
+    transition: width 0.1s linear;
+  }
+
+  /* DARK MODE */
+  body.dark-mode {
+    --white: #111111;
+    --black: #f0efe9;
+    --grey: #888888;
+    --light: #1e1e1e;
+    --border: #2a2a2a;
+    background: #111111;
+    color: #f0efe9;
+  }
+
+  body.dark-mode nav {
+    background: rgba(17,17,17,0.95);
+    border-bottom-color: #2a2a2a;
+  }
+
+  body.dark-mode .section:nth-child(even) { background: #161616; }
+  body.dark-mode .section:nth-child(odd) { background: #111111; }
+  body.dark-mode .term-card, body.dark-mode .money-card,
+  body.dark-mode .mistake-card, body.dark-mode .advanced-card,
+  body.dark-mode .step-card, body.dark-mode .asset-row,
+  body.dark-mode .risk-item, body.dark-mode .market-step,
+  body.dark-mode .faq-btn, body.dark-mode .expandable,
+  body.dark-mode .expand-btn { background: #1a1a1a; border-color: #2a2a2a; color: #f0efe9; }
+  body.dark-mode .term-def, body.dark-mode .money-card p,
+  body.dark-mode .mistake-desc, body.dark-mode .step-card-desc,
+  body.dark-mode .risk-item-desc, body.dark-mode .faq-answer p,
+  body.dark-mode .market-step-content span { color: #888; }
+  body.dark-mode .hero::before { opacity: 0.15; }
+  body.dark-mode .hero-headline { color: #f0efe9; }
+  body.dark-mode .section-title { color: #f0efe9; }
+  body.dark-mode .stats-bar { background: #161616; border-color: #2a2a2a; }
+  body.dark-mode .stats-bar-sub { color: #666; }
+  body.dark-mode .geo-divider canvas { opacity: 0.3; }
+  body.dark-mode .calc-result { background: #1a1a1a; border: 1px solid #2a2a2a; }
+  body.dark-mode .faq-q { color: #ccc; }
+  body.dark-mode .footer-full { background: #0a0a0a; }
+
+  .dark-toggle {
+    position: fixed;
+    top: 1.1rem;
+    right: 8rem;
+    z-index: 200;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    color: var(--grey);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .dark-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* SEARCH */
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 5000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+    backdrop-filter: blur(4px);
+  }
+
+  .search-overlay.open { display: flex; }
+
+  .search-box {
+    background: var(--white);
+    border-radius: 6px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+  }
+
+  .search-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-input-wrap span { font-size: 1rem; color: var(--grey); }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--black);
+    outline: none;
+  }
+
+  .search-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--grey);
+    padding: 0 4px;
+  }
+
+  .search-results {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .search-result-item {
+    padding: 0.9rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    text-decoration: none;
+    display: block;
+  }
+
+  .search-result-item:hover { background: var(--light); }
+
+  .search-result-chapter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.2rem;
+  }
+
+  .search-result-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--black);
+    margin-bottom: 0.2rem;
+  }
+
+  .search-result-snippet {
+    font-size: 0.78rem;
+    color: var(--grey);
+    font-weight: 300;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .search-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--grey);
+    font-size: 0.85rem;
+  }
+
+  /* SHARE BUTTONS */
+  .share-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .share-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-right: 0.3rem;
+  }
+
+  .share-btn {
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--black);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .share-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* HELPFUL RATING */
+  .helpful-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding: 0.9rem 1.2rem;
+    background: var(--light);
+    border-radius: 3px;
+  }
+
+  .helpful-label {
+    font-size: 0.82rem;
+    color: var(--grey);
+    font-weight: 300;
+    flex: 1;
+  }
+
+  .helpful-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--white);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .helpful-btn:hover { border-color: var(--gold); transform: scale(1.1); }
+  .helpful-btn.voted { background: var(--gold); border-color: var(--gold); }
+
+  .helpful-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--grey);
+    min-width: 60px;
+  }
+
+  /* PRINT BUTTON */
+  .print-btn {
+    position: fixed;
+    bottom: 7rem;
+    right: 2rem;
+    z-index: 1000;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 1px solid var(--border);
+    color: var(--black);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+  }
+
+  .print-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  @media print {
+    nav, .tts-widget, .print-btn, .dark-toggle, .progress-bar, .search-overlay, .cursor, .cursor-ring { display: none !important; }
+    .section, .interactive-section { page-break-inside: avoid; }
+  }
+
+  @media (max-width: 768px) {
+    .dark-toggle { right: 5rem; font-size: 0; gap: 0; padding: 6px 8px; }
+    .print-btn { bottom: 5rem; right: 1rem; }
+  }
 </style>
 </head>
 <body>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Dark mode toggle -->
+<button class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()">◐ Dark</button>
+
+<!-- Search overlay -->
+<div class="search-overlay" id="searchOverlay" onclick="closeSearch(event)">
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <span>⌕</span>
+      <input class="search-input" id="searchInput" placeholder="Search anything..." oninput="runSearch(this.value)" onkeydown="searchKeydown(event)">
+      <button class="search-close" onclick="closeSearchPanel()">✕</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="search-empty">Start typing to search...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Print button -->
+<button class="print-btn" onclick="window.print()" title="Save as PDF">⎙</button>
 
 <!-- Custom cursor -->
 <div class="cursor" id="cursor"></div>
@@ -1735,7 +2101,7 @@
     <li><a href="#faq">FAQ</a></li>
     <li><a href="#tools">Tools</a></li>
   </ul>
-  <a href="#" class="nav-cta">Start Learning</a>
+  <a href="#" class="nav-cta" onclick="openSearch(event)">⌕ Search</a>
 </nav>
 
 <!-- HERO -->
@@ -1812,7 +2178,7 @@
 </div>
 
 <!-- KEY TERMS SECTION -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="terms">
   <div class="section-label">Chapter 02</div>
   <h2 class="section-title">Key <em>Terms</em></h2>
@@ -1931,7 +2297,7 @@
 </div>
 
 <!-- HOW THE STOCK MARKET WORKS -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="how-it-works">
   <div class="section-label">Chapter 03</div>
   <h2 class="section-title">How the Market <em>Works</em></h2>
@@ -1994,14 +2360,14 @@
   </div>
 
   <!-- BULL VS BEAR CHART -->
-  <div style="margin-top:2rem;border:1px solid var(--border);border-radius:3px;padding:1.5rem;background:#fafafa;">
-    <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:1rem;">Bull Market vs Bear Market — Visual Guide</div>
+  <div style="margin-top:2rem;border:1px solid #1a1a1a;border-radius:3px;padding:1.5rem;background:#0a0a0a;">
+    <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:1rem;">Bull Market vs Bear Market — Visual Guide</div>
     <canvas id="bullBearChart" style="width:100%;height:auto;display:block;"></canvas>
   </div>
 </div>
 
 <!-- NAVIGATING THE MARKET -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="navigating">
   <div class="section-label">Chapter 04</div>
   <h2 class="section-title">Navigating the <em>Market</em></h2>
@@ -2155,8 +2521,8 @@
     </div>
 
     <!-- ORDER TYPES DIAGRAM -->
-    <div style="margin-top:1.5rem;border:1px solid var(--border);border-radius:3px;padding:1.5rem;background:#fafafa;">
-      <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:1rem;">Order Types — Visual Guide</div>
+    <div style="margin-top:1.5rem;border:1px solid #1a1a1a;border-radius:3px;padding:1.5rem;background:#0a0a0a;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:1rem;">Order Types — Visual Guide</div>
       <canvas id="orderChart" style="width:100%;height:auto;display:block;"></canvas>
     </div>
   </div>
@@ -2219,7 +2585,7 @@
 </div>
 
 <!-- HOW TO MAKE MONEY -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="make-money">
   <div class="section-label">Chapter 05</div>
   <h2 class="section-title">How to Make <em>Money</em></h2>
@@ -2288,7 +2654,7 @@
 </div>
 
 <!-- RISK MANAGEMENT -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="risk">
   <div class="section-label">Chapter 06</div>
   <h2 class="section-title">Managing <em>Risk</em></h2>
@@ -2370,7 +2736,7 @@
 </div>
 
 <!-- HOW TO GET STARTED -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="get-started">
   <div class="section-label">Chapter 07</div>
   <h2 class="section-title">How to Get <em>Started</em></h2>
@@ -2436,7 +2802,7 @@
 </div>
 
 <!-- ADVANCED TOPICS CHAPTER -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="advanced">
   <div class="section-label">Chapter 08</div>
   <h2 class="section-title">Advanced <em>Strategies</em></h2>
@@ -2644,14 +3010,14 @@
 </div>
 
 <!-- INTERACTIVES HEADER -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="interactive-section" id="tools">
   <div class="section-label">Interactive Tools</div>
   <h2 class="section-title">Learn by <em>Doing</em></h2>
 </div>
 
 <!-- COMPOUND INTEREST CALCULATOR -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="interactive-section" id="calculator">
   <div class="interactive-tag">Tool 01</div>
   <div class="section-label">Compound Interest Calculator</div>
@@ -2704,7 +3070,7 @@
 </div>
 
 <!-- PORTFOLIO BUILDER -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="interactive-section" id="portfolio-builder">
   <div class="interactive-tag">Tool 02</div>
   <div class="section-label">Portfolio Builder</div>
@@ -2774,7 +3140,7 @@
 </div>
 
 <!-- RISK TOLERANCE QUIZ -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="interactive-section" id="quiz">
   <div class="interactive-tag">Tool 03</div>
   <div class="section-label">Risk Tolerance Quiz</div>
@@ -2811,7 +3177,7 @@
 </div>
 
 <!-- MARKET SCENARIO GAME -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="interactive-section" id="game">
   <div class="interactive-tag">Tool 04</div>
   <div class="section-label">Market Scenario Game</div>
@@ -2856,7 +3222,7 @@
 </div>
 
 <!-- FAQ SECTION -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="faq">
   <div class="section-label">Got Questions?</div>
   <h2 class="section-title">Frequently Asked <em>Questions</em></h2>
@@ -2946,7 +3312,7 @@
 </div>
 
 <!-- COMMON MISTAKES -->
-<hr class="section-divider">
+<div class="geo-divider"><canvas class="geo-canvas"></canvas></div>
 <div class="section" id="mistakes">
   <div class="section-label">Learn from Others</div>
   <h2 class="section-title">Common Beginner <em>Mistakes</em></h2>
@@ -3289,146 +3655,160 @@
   function setupCanvas(id, aspectRatio) {
     const canvas = document.getElementById(id);
     if (!canvas) return null;
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3); // cap at 3x
     const w = canvas.parentElement.clientWidth - 32;
     const h = w * aspectRatio;
-    // Set actual pixel size scaled by DPR for sharpness
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    // Keep CSS display size the same
+    // Physical pixel size
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    // CSS display size stays the same
     canvas.style.width = w + 'px';
     canvas.style.height = h + 'px';
     const ctx = canvas.getContext('2d');
-    // Scale all drawing operations up by DPR
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // reset any previous transform
     ctx.scale(dpr, dpr);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    // Store logical size on ctx for easy access in draw functions
+    ctx._w = w;
+    ctx._h = h;
     return ctx;
   }
 
   function drawBullBear() {
-    const ctx = setupCanvas('bullBearChart', 0.38);
+    const ctx = setupCanvas('bullBearChart', 0.42);
     if (!ctx) return;
-    const W = ctx.canvas.width, H = ctx.canvas.height;
-    const pad = { l: W*0.06, r: W*0.04, t: H*0.18, b: H*0.18 };
+    const W = ctx._w, H = ctx._h;
+    const pad = { l: W*0.07, r: W*0.04, t: H*0.22, b: H*0.18 };
     const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
     const f = s => s * (W / 700);
 
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#fafafa';
+    // Dark background
+    ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, W, H);
 
-    // Grid
-    ctx.strokeStyle = '#eeeeee'; ctx.lineWidth = 1;
+    // Subtle grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1;
     [0.25, 0.5, 0.75].forEach(r => {
       ctx.beginPath(); ctx.moveTo(pad.l, pad.t + ch*r); ctx.lineTo(pad.l+cw, pad.t + ch*r); ctx.stroke();
     });
 
-    // Points normalized
     const bearPts = [[0,.35],[.1,.45],[.2,.55],[.3,.7],[.4,.82],[.5,.9],[.55,.95]];
-    const recPts = [[.55,.95],[.62,.88],[.66,.82]];
+    const recPts  = [[.55,.95],[.62,.88],[.66,.82]];
     const bullPts = [[.66,.82],[.73,.68],[.8,.53],[.87,.35],[.93,.18],[1,.08]];
-
     function toXY(px, py) { return [pad.l + px*cw, pad.t + py*ch]; }
 
-    // Fill areas
+    // Bear fill with gradient
+    const bearGrad = ctx.createLinearGradient(0, pad.t, 0, pad.t+ch);
+    bearGrad.addColorStop(0, 'rgba(220,38,38,0.15)');
+    bearGrad.addColorStop(1, 'rgba(220,38,38,0)');
     ctx.beginPath();
     bearPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
     ctx.lineTo(pad.l+bearPts[bearPts.length-1][0]*cw, pad.t+ch); ctx.lineTo(pad.l, pad.t+ch); ctx.closePath();
-    ctx.fillStyle = 'rgba(220,38,38,0.06)'; ctx.fill();
+    ctx.fillStyle = bearGrad; ctx.fill();
 
+    // Bull fill with gradient
+    const bullGrad = ctx.createLinearGradient(0, pad.t, 0, pad.t+ch);
+    bullGrad.addColorStop(0, 'rgba(201,168,76,0.18)');
+    bullGrad.addColorStop(1, 'rgba(201,168,76,0)');
     ctx.beginPath();
     bullPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
     ctx.lineTo(pad.l+cw, pad.t+ch); ctx.lineTo(pad.l+bullPts[0][0]*cw, pad.t+ch); ctx.closePath();
-    ctx.fillStyle = 'rgba(22,163,74,0.06)'; ctx.fill();
+    ctx.fillStyle = bullGrad; ctx.fill();
 
     // Divider
     const divX = pad.l + 0.62*cw;
-    ctx.setLineDash([f(5),f(3)]); ctx.strokeStyle = '#ddd'; ctx.lineWidth = f(1.5);
-    ctx.beginPath(); ctx.moveTo(divX, pad.t-H*0.05); ctx.lineTo(divX, pad.t+ch); ctx.stroke();
+    ctx.setLineDash([f(5),f(3)]); ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = f(1);
+    ctx.beginPath(); ctx.moveTo(divX, pad.t-H*0.08); ctx.lineTo(divX, pad.t+ch); ctx.stroke();
     ctx.setLineDash([]);
 
     // Recovery dashed
-    ctx.setLineDash([f(5),f(3)]); ctx.strokeStyle = '#aaa'; ctx.lineWidth = f(2);
+    ctx.setLineDash([f(5),f(3)]); ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = f(1.5);
     ctx.beginPath();
     recPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
     ctx.stroke(); ctx.setLineDash([]);
 
-    // Bear line
-    ctx.strokeStyle = '#dc2626'; ctx.lineWidth = f(2.5); ctx.lineJoin = 'round';
+    // Bear line — red
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = f(2); ctx.lineJoin = 'round';
     ctx.beginPath();
     bearPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
     ctx.stroke();
 
-    // Bull line
-    ctx.strokeStyle = '#16a34a'; ctx.lineWidth = f(2.5);
+    // Bull line — gold
+    ctx.strokeStyle = '#c9a84c'; ctx.lineWidth = f(2.5);
     ctx.beginPath();
     bullPts.forEach(([px,py], i) => { const [x,y]=toXY(px,py); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
     ctx.stroke();
 
-    // Labels
     const fs = Math.max(9, f(11));
-    const fsSmall = Math.max(8, f(9));
+    const fsSmall = Math.max(7, f(9));
 
-    // Bear label badge
-    const [bx,] = toXY(0.15, 0);
-    ctx.fillStyle = '#dc2626';
-    ctx.beginPath(); ctx.roundRect(pad.l+f(5), pad.t-H*0.14, f(100), H*0.1, 2); ctx.fill();
+    // Bear badge
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath(); ctx.roundRect(pad.l+f(5), pad.t-H*0.18, f(105), H*0.12, 3); ctx.fill();
     ctx.fillStyle = '#fff'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
-    ctx.fillText('BEAR MARKET', pad.l+f(55), pad.t-H*0.065);
-    ctx.fillStyle = '#dc2626'; ctx.font = `${fsSmall}px monospace`;
-    ctx.fillText('Prices falling 20%+', pad.l+f(55), pad.t+H*0.06);
+    ctx.fillText('BEAR MARKET', pad.l+f(57), pad.t-H*0.10);
+    ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.font = `${fsSmall}px monospace`;
+    ctx.fillText('Prices falling 20%+', pad.l+f(57), pad.t+H*0.02);
 
-    // Bull label badge
-    ctx.fillStyle = '#16a34a';
-    ctx.beginPath(); ctx.roundRect(pad.l+cw-f(105), pad.t-H*0.14, f(100), H*0.1, 2); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
-    ctx.fillText('BULL MARKET', pad.l+cw-f(55), pad.t-H*0.065);
-    ctx.fillStyle = '#16a34a'; ctx.font = `${fsSmall}px monospace`;
-    ctx.fillText('Prices rising 20%+', pad.l+cw-f(55), pad.t+H*0.06);
+    // Bull badge — gold
+    ctx.fillStyle = '#c9a84c';
+    ctx.beginPath(); ctx.roundRect(pad.l+cw-f(110), pad.t-H*0.18, f(105), H*0.12, 3); ctx.fill();
+    ctx.fillStyle = '#000'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText('BULL MARKET', pad.l+cw-f(57), pad.t-H*0.10);
+    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.font = `${fsSmall}px monospace`;
+    ctx.fillText('Prices rising 20%+', pad.l+cw-f(57), pad.t+H*0.02);
 
-    // Bottom labels
-    ctx.fillStyle = '#aaa'; ctx.font = `${fsSmall}px monospace`; ctx.textAlign = 'center';
-    ctx.fillText('Avg: 9–18 months', pad.l+cw*0.27, pad.t+ch+H*0.12);
-    ctx.fillText('Avg: 4+ years', pad.l+cw*0.83, pad.t+ch+H*0.12);
+    // Bottom duration labels
+    ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = `${fsSmall}px monospace`; ctx.textAlign = 'center';
+    ctx.fillText('Avg: 9–18 months', pad.l+cw*0.27, pad.t+ch+H*0.11);
+    ctx.fillText('Avg: 4+ years', pad.l+cw*0.83, pad.t+ch+H*0.11);
 
     // Dots
     const [botX, botY] = toXY(0.55, 0.95);
-    ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(botX, botY, f(4), 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(botX, botY, f(4.5), 0, Math.PI*2); ctx.fill();
     const [peakX, peakY] = toXY(1, 0.08);
-    ctx.fillStyle = '#16a34a'; ctx.beginPath(); ctx.arc(peakX, peakY, f(4), 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#c9a84c'; ctx.beginPath(); ctx.arc(peakX, peakY, f(4.5), 0, Math.PI*2); ctx.fill();
   }
 
   function drawCandlestick() {
-    const ctx = setupCanvas('candlestickChart', 0.45);
+    const ctx = setupCanvas('candlestickChart', 0.48);
     if (!ctx) return;
-    const W = ctx.canvas.width, H = ctx.canvas.height;
+    const W = ctx._w, H = ctx._h;
     const f = s => s * (W / 700);
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#fafafa'; ctx.fillRect(0, 0, W, H);
+
+    // Dark background
+    ctx.fillStyle = '#f5f5f0'; ctx.fillRect(0, 0, W, H);
+
+    // Subtle grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1;
+    [0.25, 0.5, 0.75].forEach(r => {
+      ctx.beginPath(); ctx.moveTo(0, H*r); ctx.lineTo(W, H*r); ctx.stroke();
+    });
 
     const fs = Math.max(9, f(11));
     const fsTiny = Math.max(7, f(9));
 
-    // BULLISH candle
-    const bx = W * 0.18, by_high = H*0.12, by_close = H*0.30, by_open = H*0.65, by_low = H*0.85;
-    const bw = W * 0.07;
-    ctx.strokeStyle = '#16a34a'; ctx.lineWidth = f(2);
+    // BULLISH candle — gold
+    const bx = W * 0.2, by_high = H*0.10, by_close = H*0.28, by_open = H*0.63, by_low = H*0.84;
+    const bw = W * 0.08;
+
+    // Wick
+    ctx.strokeStyle = '#c9a84c'; ctx.lineWidth = f(1.5);
     ctx.beginPath(); ctx.moveTo(bx, by_high); ctx.lineTo(bx, by_low); ctx.stroke();
-    ctx.fillStyle = '#16a34a';
+
+    // Body gradient
+    const bullBodyGrad = ctx.createLinearGradient(bx-bw/2, by_close, bx+bw/2, by_open);
+    bullBodyGrad.addColorStop(0, '#f0d080');
+    bullBodyGrad.addColorStop(1, '#c9a84c');
+    ctx.fillStyle = bullBodyGrad;
     ctx.beginPath(); ctx.roundRect(bx-bw/2, by_close, bw, by_open-by_close, 2); ctx.fill();
 
-    // Bullish labels
-    const labelLines = (x, y, lines, colors) => {
-      lines.forEach((line, i) => {
-        ctx.fillStyle = colors[i] || '#555';
-        ctx.font = `${fsTiny}px monospace`;
-        ctx.textAlign = 'left';
-        ctx.fillText(line, x, y + i * (fsTiny + 3));
-      });
-    };
-
-    const lx = bx + bw/2 + f(12);
-    ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
-    [[by_high,'#555','HIGH — Highest price'],[by_close,'#16a34a','CLOSE — Price ended here (up)'],[by_open,'#16a34a','OPEN — Price started here'],[by_low,'#555','LOW — Lowest price']].forEach(([y, color, label]) => {
+    // Labels — bullish side
+    const lx = bx + bw/2 + f(14);
+    ctx.strokeStyle = 'rgba(201,168,76,0.3)'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+    [[by_high,'rgba(255,255,255,0.5)','HIGH — Highest price'],[by_close,'#c9a84c','CLOSE — Price ended here'],[by_open,'#c9a84c','OPEN — Price started here'],[by_low,'rgba(255,255,255,0.5)','LOW — Lowest price']].forEach(([y, color, label]) => {
       ctx.beginPath(); ctx.moveTo(bx+bw/2, y); ctx.lineTo(lx-f(4), y); ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = color; ctx.font = `${fsTiny}px monospace`; ctx.textAlign = 'left';
@@ -3436,23 +3816,30 @@
       ctx.setLineDash([3,3]);
     });
     ctx.setLineDash([]);
-    ctx.fillStyle = '#16a34a'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
+    ctx.fillStyle = '#c9a84c'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
     ctx.fillText('BULLISH', bx, H*0.94);
-    ctx.fillStyle = '#888'; ctx.font = `${fsTiny}px monospace`;
+    ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = `${fsTiny}px monospace`;
     ctx.fillText('Price went UP', bx, H*0.94 + fsTiny + 3);
 
-    // BEARISH candle
-    const rx = W * 0.78, ry_high = H*0.10, ry_open = H*0.28, ry_close = H*0.68, ry_low = H*0.87;
-    const rw = W * 0.07;
-    ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = f(2);
+    // BEARISH candle — red/white
+    const rx = W * 0.8, ry_high = H*0.08, ry_open = H*0.26, ry_close = H*0.66, ry_low = H*0.85;
+    const rw = W * 0.08;
+
+    // Wick
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = f(1.5);
     ctx.beginPath(); ctx.moveTo(rx, ry_high); ctx.lineTo(rx, ry_low); ctx.stroke();
-    ctx.fillStyle = '#0a0a0a';
+
+    // Body gradient
+    const bearBodyGrad = ctx.createLinearGradient(rx-rw/2, ry_open, rx+rw/2, ry_close);
+    bearBodyGrad.addColorStop(0, '#ff6b6b');
+    bearBodyGrad.addColorStop(1, '#dc2626');
+    ctx.fillStyle = bearBodyGrad;
     ctx.beginPath(); ctx.roundRect(rx-rw/2, ry_open, rw, ry_close-ry_open, 2); ctx.fill();
 
-    // Bearish labels (right side, labels to left)
-    const rlx = rx - rw/2 - f(12);
-    ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
-    [[ry_high,'#555','HIGH'],[ry_open,'#333','OPEN — Price started (bearish)'],[ry_close,'#333','CLOSE — Price ended (lower)'],[ry_low,'#555','LOW']].forEach(([y, color, label]) => {
+    // Labels — bearish side
+    const rlx = rx - rw/2 - f(14);
+    ctx.strokeStyle = 'rgba(239,68,68,0.3)'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+    [[ry_high,'rgba(255,255,255,0.5)','HIGH'],[ry_open,'#ef4444','OPEN — Price started here'],[ry_close,'#ef4444','CLOSE — Price ended lower'],[ry_low,'rgba(255,255,255,0.5)','LOW']].forEach(([y, color, label]) => {
       ctx.beginPath(); ctx.moveTo(rx-rw/2, y); ctx.lineTo(rlx+f(4), y); ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = color; ctx.font = `${fsTiny}px monospace`; ctx.textAlign = 'right';
@@ -3460,149 +3847,523 @@
       ctx.setLineDash([3,3]);
     });
     ctx.setLineDash([]);
-    ctx.fillStyle = '#0a0a0a'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
+    ctx.fillStyle = '#ef4444'; ctx.font = `bold ${fs}px sans-serif`; ctx.textAlign = 'center';
     ctx.fillText('BEARISH', rx, H*0.94);
-    ctx.fillStyle = '#888'; ctx.font = `${fsTiny}px monospace`;
+    ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = `${fsTiny}px monospace`;
     ctx.fillText('Price went DOWN', rx, H*0.94 + fsTiny + 3);
   }
 
   function drawVolume() {
-    const ctx = setupCanvas('volumeChart', 0.38);
+    const ctx = setupCanvas('volumeChart', 0.40);
     if (!ctx) return;
-    const W = ctx.canvas.width, H = ctx.canvas.height;
-    const f = s => s * (W/700);
+    const W = ctx._w, H = ctx._h;
+    const f = s => s*(W/700);
     ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#fafafa'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = '#f5f5f0'; ctx.fillRect(0,0,W,H);
 
-    const priceH = H * 0.62, volY = H * 0.68, volH = H * 0.22;
+    const priceH = H*0.60, volY = H*0.66, volH = H*0.24;
     const pts = [[0.04,0.85],[0.14,0.72],[0.24,0.68],[0.34,0.58],[0.44,0.62],[0.54,0.38],[0.64,0.22],[0.74,0.08],[0.84,0.35],[0.91,0.55],[0.97,0.50]];
     const vols = [0.25,0.28,0.26,0.30,0.27,0.55,0.70,0.95,0.30,0.28,0.25];
 
-    // Price fill
+    // Subtle grid
+    ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1;
+    [0.25,0.5,0.75].forEach(r => {
+      ctx.beginPath(); ctx.moveTo(0,r*priceH); ctx.lineTo(W,r*priceH); ctx.stroke();
+    });
+
+    // Price fill gradient
+    const pg = ctx.createLinearGradient(0,0,0,priceH);
+    pg.addColorStop(0,'rgba(201,168,76,0.15)'); pg.addColorStop(1,'rgba(201,168,76,0)');
     ctx.beginPath();
-    pts.forEach(([px,py],i) => { const x=px*W, y=py*priceH; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
-    ctx.lineTo(pts[pts.length-1][0]*W, priceH); ctx.lineTo(pts[0][0]*W, priceH); ctx.closePath();
-    ctx.fillStyle = 'rgba(0,0,0,0.04)'; ctx.fill();
+    pts.forEach(([px,py],i) => { const x=px*W,y=py*priceH; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.lineTo(pts[pts.length-1][0]*W,priceH); ctx.lineTo(pts[0][0]*W,priceH); ctx.closePath();
+    ctx.fillStyle=pg; ctx.fill();
 
     // Price line
-    ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = f(2); ctx.lineJoin = 'round';
+    ctx.strokeStyle='#c9a84c'; ctx.lineWidth=f(2); ctx.lineJoin='round';
     ctx.beginPath();
-    pts.forEach(([px,py],i) => { const x=px*W, y=py*priceH; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    pts.forEach(([px,py],i) => { const x=px*W,y=py*priceH; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
     ctx.stroke();
 
     // Divider
-    ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(0, volY); ctx.lineTo(W, volY); ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,volY); ctx.lineTo(W,volY); ctx.stroke();
 
     // Volume bars
-    const bw = W * 0.055;
-    pts.forEach(([px], i) => {
-      const x = px*W - bw/2;
-      const bh = vols[i] * volH;
-      const isSpike = vols[i] > 0.5;
-      ctx.fillStyle = isSpike ? '#0a0a0a' : '#ccc';
-      ctx.beginPath(); ctx.roundRect(x, volY + volH - bh, bw, bh, 1); ctx.fill();
+    const bw = W*0.055;
+    pts.forEach(([px],i) => {
+      const x=px*W-bw/2, bh=vols[i]*volH, isSpike=vols[i]>0.5;
+      if (isSpike) {
+        const sg=ctx.createLinearGradient(0,volY,0,volY+volH);
+        sg.addColorStop(0,'#c9a84c'); sg.addColorStop(1,'rgba(201,168,76,0.3)');
+        ctx.fillStyle=sg;
+      } else { ctx.fillStyle='rgba(255,255,255,0.1)'; }
+      ctx.beginPath(); ctx.roundRect(x,volY+volH-bh,bw,bh,1); ctx.fill();
     });
 
-    // Labels
-    const fs = Math.max(8, f(10));
-    ctx.fillStyle = '#aaa'; ctx.font = `${fs}px monospace`; ctx.textAlign = 'left';
-    ctx.fillText('PRICE', f(5), priceH * 0.15);
-    ctx.fillText('VOL', f(5), volY + fs + 2);
+    const fs=Math.max(8,f(10));
+    ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font=`${fs}px monospace`; ctx.textAlign='left';
+    ctx.fillText('PRICE',f(5),priceH*0.12);
+    ctx.fillText('VOL',f(5),volY+fs+2);
 
     // Spike annotation
-    const spikeX = pts[7][0]*W;
-    ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = f(1.5); ctx.setLineDash([4,3]);
-    ctx.beginPath(); ctx.moveTo(spikeX, volY - f(5)); ctx.lineTo(spikeX, priceH*0.22); ctx.stroke();
+    const spikeX=pts[7][0]*W;
+    ctx.strokeStyle='#c9a84c'; ctx.lineWidth=f(1); ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(spikeX,volY-f(5)); ctx.lineTo(spikeX,priceH*0.20); ctx.stroke();
     ctx.setLineDash([]);
-    const boxW = Math.min(W*0.42, f(220)), boxH = H*0.13;
-    const boxX = Math.min(spikeX - boxW/2, W - boxW - f(5));
-    ctx.fillStyle = '#0a0a0a';
-    ctx.beginPath(); ctx.roundRect(Math.max(f(5), boxX), priceH*0.06, boxW, boxH, 2); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = `bold ${fs}px monospace`; ctx.textAlign = 'center';
-    ctx.fillText('VOLUME SPIKE', Math.max(f(5), boxX) + boxW/2, priceH*0.06 + boxH*0.45);
-    ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.font = `${Math.max(7,f(8.5))}px monospace`;
-    ctx.fillText('Big move confirmed by high volume', Math.max(f(5), boxX) + boxW/2, priceH*0.06 + boxH*0.85);
-
-    // Low volume annotation
-    ctx.fillStyle = '#aaa'; ctx.font = `${fs}px monospace`; ctx.textAlign = 'center';
-    ctx.fillText('Low vol = less significant', pts[2][0]*W, H*0.97);
+    const boxW=Math.min(W*0.40,f(210)),boxH=H*0.13;
+    const boxX=Math.min(spikeX-boxW/2,W-boxW-f(5));
+    const ag=ctx.createLinearGradient(Math.max(f(5),boxX),0,Math.max(f(5),boxX)+boxW,0);
+    ag.addColorStop(0,'#1a1500'); ag.addColorStop(1,'#2a2000');
+    ctx.fillStyle=ag;
+    ctx.beginPath(); ctx.roundRect(Math.max(f(5),boxX),priceH*0.04,boxW,boxH,3); ctx.fill();
+    ctx.strokeStyle='#c9a84c'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.roundRect(Math.max(f(5),boxX),priceH*0.04,boxW,boxH,3); ctx.stroke();
+    ctx.fillStyle='#c9a84c'; ctx.font=`bold ${fs}px monospace`; ctx.textAlign='center';
+    ctx.fillText('VOLUME SPIKE',Math.max(f(5),boxX)+boxW/2,priceH*0.04+boxH*0.45);
+    ctx.fillStyle='rgba(201,168,76,0.6)'; ctx.font=`${Math.max(7,f(8.5))}px monospace`;
+    ctx.fillText('Big move confirmed by high volume',Math.max(f(5),boxX)+boxW/2,priceH*0.04+boxH*0.82);
+    ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font=`${fs}px monospace`; ctx.textAlign='center';
+    ctx.fillText('Low vol = less significant',pts[2][0]*W,H*0.97);
   }
 
   function drawOrders() {
-    const ctx = setupCanvas('orderChart', 0.38);
+    const ctx = setupCanvas('orderChart', 0.40);
     if (!ctx) return;
-    const W = ctx.canvas.width, H = ctx.canvas.height;
+    const W = ctx._w, H = ctx._h;
     const f = s => s*(W/700);
     ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#fafafa'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#0a0a0a'; ctx.fillRect(0,0,W,H);
 
-    const pad = {l:W*0.08, r:W*0.03, t:H*0.12, b:H*0.12};
-    const cw = W-pad.l-pad.r, ch = H-pad.t-pad.b;
-    const fs = Math.max(8, f(10));
+    const pad={l:W*0.08,r:W*0.03,t:H*0.12,b:H*0.12};
+    const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+    const fs=Math.max(8,f(10));
 
     // Grid
-    ctx.strokeStyle = '#eeeeee'; ctx.lineWidth = 1;
+    ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1;
     [0.25,0.5,0.75].forEach(r => {
-      ctx.beginPath(); ctx.moveTo(pad.l, pad.t+ch*r); ctx.lineTo(pad.l+cw, pad.t+ch*r); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pad.l,pad.t+ch*r); ctx.lineTo(pad.l+cw,pad.t+ch*r); ctx.stroke();
     });
 
     // Y labels
-    const prices = ['$120','$100','$80','$60'];
-    prices.forEach((p,i) => {
-      ctx.fillStyle='#aaa'; ctx.font=`${fs}px monospace`; ctx.textAlign='right';
-      ctx.fillText(p, pad.l-f(4), pad.t + ch*(i/3) + fs*0.35);
+    ['$120','$100','$80','$60'].forEach((p,i) => {
+      ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font=`${fs}px monospace`; ctx.textAlign='right';
+      ctx.fillText(p,pad.l-f(4),pad.t+ch*(i/3)+fs*0.35);
     });
 
-    // Price line
-    const pPts = [[0,0.82],[0.13,0.72],[0.26,0.60],[0.4,0.44],[0.5,0.30],[0.6,0.14],[0.68,0.30],[0.77,0.50],[0.87,0.62],[0.97,0.56]];
-    ctx.strokeStyle='#0a0a0a'; ctx.lineWidth=f(2.5); ctx.lineJoin='round';
+    // Price fill
+    const pPts=[[0,0.82],[0.13,0.72],[0.26,0.60],[0.4,0.44],[0.5,0.30],[0.6,0.14],[0.68,0.30],[0.77,0.50],[0.87,0.62],[0.97,0.56]];
+    const lineGrad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+    lineGrad.addColorStop(0,'rgba(201,168,76,0.12)'); lineGrad.addColorStop(1,'rgba(201,168,76,0)');
     ctx.beginPath();
-    pPts.forEach(([px,py],i) => { const x=pad.l+px*cw, y=pad.t+py*ch; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    pPts.forEach(([px,py],i) => { const x=pad.l+px*cw,y=pad.t+py*ch; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.lineTo(pad.l+cw,pad.t+ch); ctx.lineTo(pad.l,pad.t+ch); ctx.closePath();
+    ctx.fillStyle=lineGrad; ctx.fill();
+
+    // Price line — gold
+    ctx.strokeStyle='#c9a84c'; ctx.lineWidth=f(2); ctx.lineJoin='round';
+    ctx.beginPath();
+    pPts.forEach(([px,py],i) => { const x=pad.l+px*cw,y=pad.t+py*ch; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
     ctx.stroke();
 
-    // Current price dot at peak
-    const cpX = pad.l+0.6*cw, cpY = pad.t+0.14*ch;
-    ctx.fillStyle='#0a0a0a'; ctx.beginPath(); ctx.arc(cpX,cpY,f(4),0,Math.PI*2); ctx.fill();
+    // Current price dot
+    const cpX=pad.l+0.6*cw, cpY=pad.t+0.14*ch;
+    ctx.fillStyle='#c9a84c'; ctx.beginPath(); ctx.arc(cpX,cpY,f(4),0,Math.PI*2); ctx.fill();
 
-    // MARKET ORDER - vertical dashed line
-    ctx.strokeStyle='#0a0a0a'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(5),f(3)]);
-    ctx.beginPath(); ctx.moveTo(cpX, cpY); ctx.lineTo(cpX, pad.t+ch); ctx.stroke();
+    // MARKET ORDER
+    ctx.strokeStyle='rgba(201,168,76,0.5)'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(5),f(3)]);
+    ctx.beginPath(); ctx.moveTo(cpX,cpY); ctx.lineTo(cpX,pad.t+ch); ctx.stroke();
     ctx.setLineDash([]);
-    const moW = Math.min(f(130), cw*0.22);
-    ctx.fillStyle='#0a0a0a';
-    ctx.beginPath(); ctx.roundRect(cpX+f(5), cpY-f(10), moW, f(18), 2); ctx.fill();
-    ctx.fillStyle='#fff'; ctx.font=`${fs}px monospace`; ctx.textAlign='left';
-    ctx.fillText('MARKET ORDER', cpX+f(8), cpY+f(3));
+    const moW=Math.min(f(130),cw*0.22);
+    ctx.fillStyle='#c9a84c';
+    ctx.beginPath(); ctx.roundRect(cpX+f(5),cpY-f(10),moW,f(18),2); ctx.fill();
+    ctx.fillStyle='#000'; ctx.font=`${fs}px monospace`; ctx.textAlign='left';
+    ctx.fillText('MARKET ORDER',cpX+f(8),cpY+f(3));
 
-    // LIMIT ORDER - horizontal dashed line at mid price
-    const loY = pad.t + ch*0.52;
-    ctx.strokeStyle='#555'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(6),f(3)]);
-    ctx.beginPath(); ctx.moveTo(pad.l, loY); ctx.lineTo(pad.l+cw, loY); ctx.stroke();
+    // LIMIT ORDER
+    const loY=pad.t+ch*0.52;
+    ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(6),f(3)]);
+    ctx.beginPath(); ctx.moveTo(pad.l,loY); ctx.lineTo(pad.l+cw,loY); ctx.stroke();
     ctx.setLineDash([]);
-    const loW = Math.min(f(150), cw*0.28);
-    ctx.fillStyle='#555';
-    ctx.beginPath(); ctx.roundRect(pad.l+f(5), loY-f(10), loW, f(18), 2); ctx.fill();
+    const loW=Math.min(f(150),cw*0.28);
+    ctx.fillStyle='rgba(255,255,255,0.15)';
+    ctx.beginPath(); ctx.roundRect(pad.l+f(5),loY-f(10),loW,f(18),2); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.roundRect(pad.l+f(5),loY-f(10),loW,f(18),2); ctx.stroke();
     ctx.fillStyle='#fff'; ctx.font=`${fs}px monospace`; ctx.textAlign='left';
-    ctx.fillText('LIMIT ORDER · $90', pad.l+f(8), loY+f(3));
+    ctx.fillText('LIMIT ORDER · $90',pad.l+f(8),loY+f(3));
 
-    // STOP LOSS - horizontal dashed line lower
-    const slY = pad.t + ch*0.76;
-    ctx.strokeStyle='#dc2626'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(6),f(3)]);
-    ctx.beginPath(); ctx.moveTo(pad.l, slY); ctx.lineTo(pad.l+cw, slY); ctx.stroke();
+    // STOP LOSS
+    const slY=pad.t+ch*0.76;
+    ctx.strokeStyle='rgba(239,68,68,0.5)'; ctx.lineWidth=f(1.5); ctx.setLineDash([f(6),f(3)]);
+    ctx.beginPath(); ctx.moveTo(pad.l,slY); ctx.lineTo(pad.l+cw,slY); ctx.stroke();
     ctx.setLineDash([]);
-    const slW = Math.min(f(165), cw*0.30);
-    ctx.fillStyle='#dc2626';
-    ctx.beginPath(); ctx.roundRect(pad.l+f(5), slY-f(10), slW, f(18), 2); ctx.fill();
+    const slW=Math.min(f(165),cw*0.30);
+    ctx.fillStyle='#ef4444';
+    ctx.beginPath(); ctx.roundRect(pad.l+f(5),slY-f(10),slW,f(18),2); ctx.fill();
     ctx.fillStyle='#fff'; ctx.font=`${fs}px monospace`; ctx.textAlign='left';
-    ctx.fillText('STOP LOSS · sell at $75', pad.l+f(8), slY+f(3));
+    ctx.fillText('STOP LOSS · sell at $75',pad.l+f(8),slY+f(3));
 
-    // X axis label
-    ctx.fillStyle='#aaa'; ctx.font=`${fs}px monospace`; ctx.textAlign='center';
-    ctx.fillText('Time →', pad.l+cw/2, pad.t+ch+H*0.09);
+    ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font=`${fs}px monospace`; ctx.textAlign='center';
+    ctx.fillText('Time →',pad.l+cw/2,pad.t+ch+H*0.09);
   }
 
-  // ── PERFORMANCE OPTIMIZATIONS ──
+  // ── GEOMETRIC DIVIDERS ──
+  function drawGeoDividers() {
+    // 6 different geometric patterns that cycle through
+    const patterns = [
+      drawDiamondGrid,
+      drawDotMatrix,
+      drawTriangleStrip,
+      drawHexRow,
+      drawZigzag,
+      drawCrossGrid,
+      drawDiamondGrid,
+      drawDotMatrix,
+      drawTriangleStrip,
+      drawHexRow,
+      drawZigzag,
+      drawCrossGrid,
+      drawDiamondGrid,
+      drawDotMatrix,
+    ];
+
+    document.querySelectorAll('.geo-canvas').forEach((canvas, index) => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = canvas.parentElement.clientWidth;
+      const h = 60;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      const patternFn = patterns[index % patterns.length];
+      patternFn(ctx, w, h);
+    });
+  }
+
+  function drawDiamondGrid(ctx, W, H) {
+    ctx.fillStyle = '#f5f5f0'; ctx.fillRect(0, 0, W, H);
+    const size = 20;
+    ctx.strokeStyle = 'rgba(201,168,76,0.2)'; ctx.lineWidth = 0.5;
+    for (let x = 0; x < W + size; x += size) {
+      for (let y = -size; y < H + size; y += size) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + size/2, y + size/2);
+        ctx.lineTo(x, y + size);
+        ctx.lineTo(x - size/2, y + size/2);
+        ctx.closePath();
+        ctx.stroke();
+      }
+    }
+    // Center line
+    ctx.strokeStyle = 'rgba(201,168,76,0.15)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+  }
+
+  function drawDotMatrix(ctx, W, H) {
+    ctx.fillStyle = '#f5f5f0'; ctx.fillRect(0, 0, W, H);
+    const spacing = 18;
+    for (let x = spacing/2; x < W; x += spacing) {
+      for (let y = spacing/2; y < H; y += spacing) {
+        const dist = Math.abs(x - W/2) / W;
+        const alpha = 0.08 + (1 - dist) * 0.15;
+        ctx.fillStyle = `rgba(201,168,76,${alpha})`;
+        ctx.beginPath();
+        ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function drawTriangleStrip(ctx, W, H) {
+    ctx.fillStyle = '#f5f5f0'; ctx.fillRect(0, 0, W, H);
+    const size = 30;
+    let col = 0;
+    for (let x = 0; x < W + size; x += size/2) {
+      const flipped = col % 2 === 0;
+      const alpha = 0.06 + Math.sin((x / W) * Math.PI) * 0.12;
+      ctx.fillStyle = `rgba(201,168,76,${alpha})`;
+      ctx.beginPath();
+      if (flipped) {
+        ctx.moveTo(x, 0); ctx.lineTo(x + size/2, H); ctx.lineTo(x - size/2, H);
+      } else {
+        ctx.moveTo(x, H); ctx.lineTo(x + size/2, 0); ctx.lineTo(x - size/2, 0);
+      }
+      ctx.closePath(); ctx.fill();
+      col++;
+    }
+    // Gold center line
+    ctx.strokeStyle = 'rgba(201,168,76,0.2)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+  }
+
+  function drawHexRow(ctx, W, H) {
+    ctx.fillStyle = '#f5f5f0'; ctx.fillRect(0, 0, W, H);
+    const r = 12;
+    const hexW = r * 2;
+    const hexH = Math.sqrt(3) * r;
+    ctx.strokeStyle = 'rgba(201,168,76,0.18)'; ctx.lineWidth = 0.75;
+    for (let col = -1; col < W / hexW + 1; col++) {
+      for (let row = 0; row < 2; row++) {
+        const x = col * hexW * 0.75 + hexW/2;
+        const y = (row + (col % 2 === 0 ? 0 : 0.5)) * hexH + H/2 - hexH/2;
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const angle = (Math.PI / 180) * (60 * i - 30);
+          const px = x + r * Math.cos(angle);
+          const py = y + r * Math.sin(angle);
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath(); ctx.stroke();
+      }
+    }
+  }
+
+  function drawZigzag(ctx, W, H) {
+    ctx.fillStyle = '#f5f5f0'; ctx.fillRect(0, 0, W, H);
+    const step = 24;
+    const amp = H * 0.3;
+    [0.3, 0.5, 0.7].forEach((yPos, i) => {
+      const alpha = [0.18, 0.28, 0.18][i];
+      ctx.strokeStyle = `rgba(201,168,76,${alpha})`;
+      ctx.lineWidth = i === 1 ? 1.5 : 0.75;
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += step) {
+        const y = H * yPos + (Math.floor(x / step) % 2 === 0 ? -amp/2 : amp/2);
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    });
+  }
+
+  function drawCrossGrid(ctx, W, H) {
+    ctx.fillStyle = '#f5f5f0'; ctx.fillRect(0, 0, W, H);
+    const spacing = 22;
+    const armLen = 5;
+    ctx.strokeStyle = 'rgba(201,168,76,0.22)'; ctx.lineWidth = 0.75;
+    for (let x = spacing/2; x < W; x += spacing) {
+      for (let y = spacing/2; y < H; y += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(x - armLen, y); ctx.lineTo(x + armLen, y);
+        ctx.moveTo(x, y - armLen); ctx.lineTo(x, y + armLen);
+        ctx.stroke();
+      }
+    }
+    // Gold center line
+    ctx.strokeStyle = 'rgba(201,168,76,0.12)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+  }
+
+  drawGeoDividers();
+  window.addEventListener('resize', debounce(drawGeoDividers, 300));
+
+  // ── PROGRESS BAR ──
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop || document.body.scrollTop;
+    const scrollHeight = doc.scrollHeight - doc.clientHeight;
+    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+  });
+
+  // ── DARK MODE ──
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const btn = document.getElementById('darkToggle');
+    const isDark = document.body.classList.contains('dark-mode');
+    btn.textContent = isDark ? '◑ Light' : '◐ Dark';
+    localStorage.setItem('mm-dark', isDark ? '1' : '0');
+    setTimeout(drawGeoDividers, 50);
+  }
+  if (localStorage.getItem('mm-dark') === '1') {
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkToggle').textContent = '◑ Light';
+  }
+
+  // ── SEARCH ──
+  const searchIndex = [
+    { chapter:'Chapter 01', title:'What is Investing?', anchor:'#investing', snippet:'Investing is putting your money into something with the goal of growing it over time.' },
+    { chapter:'Chapter 02', title:'Stock', anchor:'#terms', snippet:'A small piece of ownership in a company. When you buy a stock you become a part-owner.' },
+    { chapter:'Chapter 02', title:'ETF', anchor:'#terms', snippet:'A bundle of many different stocks in one. Spreads your risk across many companies.' },
+    { chapter:'Chapter 02', title:'Portfolio', anchor:'#terms', snippet:'Your complete collection of investments. Spread money across different investments.' },
+    { chapter:'Chapter 02', title:'Bull Market', anchor:'#terms', snippet:'When the stock market is doing well and prices are generally rising.' },
+    { chapter:'Chapter 02', title:'Bear Market', anchor:'#terms', snippet:'Prices are falling and the market is struggling. Can be caused by recessions.' },
+    { chapter:'Chapter 02', title:'Dividends', anchor:'#terms', snippet:'Cash payments some companies give shareholders regularly just for holding their stock.' },
+    { chapter:'Chapter 02', title:'Broker', anchor:'#terms', snippet:'The platform or app you use to buy and sell stocks. Robinhood, Fidelity, Schwab.' },
+    { chapter:'Chapter 03', title:'How the Market Works', anchor:'#how-it-works', snippet:'The stock market is like a massive auction. Price is determined by supply and demand.' },
+    { chapter:'Chapter 04', title:'Market Cap', anchor:'#navigating', snippet:'Total value of a company. Stock price × total shares outstanding.' },
+    { chapter:'Chapter 04', title:'P/E Ratio', anchor:'#navigating', snippet:'Price-to-Earnings ratio. How much you are paying for every $1 of the company earnings.' },
+    { chapter:'Chapter 04', title:'Volume', anchor:'#navigating', snippet:'The number of shares traded today. Volume spikes often signal something important.' },
+    { chapter:'Chapter 04', title:'Market Order', anchor:'#navigating', snippet:'Buys or sells immediately at the current market price.' },
+    { chapter:'Chapter 04', title:'Limit Order', anchor:'#navigating', snippet:'You set the exact price you want to buy or sell at.' },
+    { chapter:'Chapter 04', title:'Stop Loss', anchor:'#navigating', snippet:'Automatically sells your stock if the price drops to a level you set.' },
+    { chapter:'Chapter 04', title:'Candlestick Chart', anchor:'#navigating', snippet:'Shows open, close, high and low price for a period. Most popular among traders.' },
+    { chapter:'Chapter 05', title:'Price Appreciation', anchor:'#make-money', snippet:'Buy a stock at one price, wait for it to grow, sell for more than you paid.' },
+    { chapter:'Chapter 05', title:'Unrealized vs Realized Gains', anchor:'#make-money', snippet:'Unrealized: profit on paper. Realized: profit locked in after you sell.' },
+    { chapter:'Chapter 06', title:'Managing Risk', anchor:'#risk', snippet:'Market risk, company risk, emotional risk, concentration risk, time risk.' },
+    { chapter:'Chapter 06', title:'Diversification', anchor:'#risk', snippet:'Do not put all your eggs in one basket. Spread across companies and industries.' },
+    { chapter:'Chapter 07', title:'How to Get Started', anchor:'#get-started', snippet:'8 steps: set your goal, emergency fund, choose broker, make your first buy.' },
+    { chapter:'Chapter 08', title:'Day Trading', anchor:'#advanced', snippet:'Buying and selling within the same day. 90% of day traders lose money.' },
+    { chapter:'Chapter 08', title:'Options Trading', anchor:'#advanced', snippet:'Contracts giving the right to buy or sell at a specific price. Very high risk.' },
+    { chapter:'Chapter 08', title:'Short Selling', anchor:'#advanced', snippet:'Betting a stock will go down. Theoretically unlimited loss potential.' },
+    { chapter:'Chapter 08', title:'Dollar Cost Averaging', anchor:'#advanced', snippet:'Invest a fixed amount regularly regardless of market conditions.' },
+    { chapter:'Chapter 08', title:'Technical Analysis', anchor:'#advanced', snippet:'Study of price charts and patterns to predict future price movements.' },
+    { chapter:'Chapter 08', title:'Fundamental Analysis', anchor:'#advanced', snippet:'Evaluating a company true value through financials and business model.' },
+    { chapter:'FAQ', title:'How much to start investing?', anchor:'#faq', snippet:'You can start with as little as $1 through fractional shares.' },
+    { chapter:'FAQ', title:'Is investing gambling?', anchor:'#faq', snippet:'No — investing in real businesses that generate value is fundamentally different.' },
+    { chapter:'Tools', title:'Compound Interest Calculator', anchor:'#calculator', snippet:'See how your money grows over time with different amounts and rates.' },
+    { chapter:'Tools', title:'Portfolio Builder', anchor:'#portfolio-builder', snippet:'Build and visualize your investment allocation across asset types.' },
+    { chapter:'Tools', title:'Risk Tolerance Quiz', anchor:'#quiz', snippet:'Find out if you are a conservative, moderate, growth or aggressive investor.' },
+    { chapter:'Tools', title:'Market Scenario Game', anchor:'#game', snippet:'Test your investing instincts with real market scenarios.' },
+  ];
+
+  function openSearch(e) {
+    if (e) e.preventDefault();
+    document.getElementById('searchOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('searchInput').focus(), 100);
+  }
+
+  function closeSearchPanel() {
+    document.getElementById('searchOverlay').classList.remove('open');
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResults').innerHTML = '<div class="search-empty">Start typing to search...</div>';
+  }
+
+  function closeSearch(e) {
+    if (e.target === document.getElementById('searchOverlay')) closeSearchPanel();
+  }
+
+  function searchKeydown(e) {
+    if (e.key === 'Escape') closeSearchPanel();
+    if (e.key === 'Enter') { const first = document.querySelector('.search-result-item'); if (first) first.click(); }
+  }
+
+  function runSearch(query) {
+    const q = query.trim().toLowerCase();
+    const results = document.getElementById('searchResults');
+    if (!q) { results.innerHTML = '<div class="search-empty">Start typing to search...</div>'; return; }
+    const matches = searchIndex.filter(item =>
+      item.title.toLowerCase().includes(q) || item.snippet.toLowerCase().includes(q) || item.chapter.toLowerCase().includes(q)
+    ).slice(0, 8);
+    if (!matches.length) { results.innerHTML = '<div class="search-empty">No results found for "' + query + '"</div>'; return; }
+    results.innerHTML = matches.map(m => `
+      <a class="search-result-item" href="${m.anchor}" onclick="closeSearchPanel()">
+        <div class="search-result-chapter">${m.chapter}</div>
+        <div class="search-result-title">${m.title}</div>
+        <div class="search-result-snippet">${m.snippet}</div>
+      </a>
+    `).join('');
+  }
+
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+    if (e.key === 'Escape') closeSearchPanel();
+  });
+
+  // ── SHARE + HELPFUL ──
+  function addShareAndHelpful() {
+    // Add ONE combined bar right before the footer
+    const footer = document.querySelector('.footer-full');
+    if (!footer) return;
+
+    const url = encodeURIComponent('https://www.moneymind.me');
+    const text = encodeURIComponent('Just found MoneyMind — a free investing education site for beginners. Really clear and well made!');
+
+    const bar = document.createElement('div');
+    bar.style.cssText = 'max-width:1100px;margin:0 auto;padding:2rem 3rem;';
+    bar.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div class="helpful-bar" style="flex-direction:column;align-items:flex-start;gap:0.75rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);">Feedback</div>
+          <span class="helpful-label" style="font-size:0.9rem;font-weight:400;color:var(--black);">Was MoneyMind helpful to you?</span>
+          <div style="display:flex;gap:0.75rem;align-items:center;">
+            <button class="helpful-btn" id="up-site" onclick="voteSite('up')">👍</button>
+            <button class="helpful-btn" id="dn-site" onclick="voteSite('dn')">👎</button>
+            <span class="helpful-count" id="count-site">Let us know!</span>
+          </div>
+        </div>
+        <div style="background:var(--light);border-radius:3px;padding:1.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem;">Share MoneyMind</div>
+          <p style="font-size:0.82rem;color:var(--grey);font-weight:300;margin-bottom:1rem;">Help others learn to invest for free.</p>
+          <div class="share-bar" style="border:none;padding:0;margin:0;flex-wrap:wrap;">
+            <a class="share-btn" href="https://twitter.com/intent/tweet?text=${text}&url=${url}" target="_blank">𝕏 Twitter</a>
+            <a class="share-btn" href="https://www.reddit.com/submit?url=${url}&title=${text}" target="_blank">Reddit</a>
+            <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=${url}" target="_blank">Facebook</a>
+            <button class="share-btn" onclick="copyMainLink(this)">⎘ Copy Link</button>
+          </div>
+        </div>
+      </div>
+    `;
+    footer.parentNode.insertBefore(bar, footer);
+  }
+
+  function copyMainLink(btn) {
+    navigator.clipboard.writeText('https://www.moneymind.me').then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      btn.style.borderColor = 'var(--gold)'; btn.style.color = 'var(--gold)';
+      setTimeout(() => { btn.textContent = orig; btn.style.borderColor = ''; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  function voteSite(dir) {
+    const votes = JSON.parse(localStorage.getItem('mm-votes') || '{}');
+    votes['site'] = dir;
+    localStorage.setItem('mm-votes', JSON.stringify(votes));
+    document.getElementById('count-site').textContent = dir === 'up' ? 'Thanks so much! 👍' : 'Thanks for the feedback 👎';
+    document.getElementById('up-site').classList.toggle('voted', dir === 'up');
+    document.getElementById('dn-site').classList.toggle('voted', dir === 'dn');
+
+    // Send to Formspree
+    fetch('https://formspree.io/f/xyknvoon', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        vote: dir === 'up' ? '👍 Helpful' : '👎 Not Helpful',
+        page: 'moneymind.me',
+        time: new Date().toLocaleString()
+      })
+    });
+  }
+
+  function copyLink(id, btn) {
+    navigator.clipboard.writeText('https://www.moneymind.me/#' + id).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      btn.style.borderColor = 'var(--gold)'; btn.style.color = 'var(--gold)';
+      setTimeout(() => { btn.textContent = orig; btn.style.borderColor = ''; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  function vote(id, dir) {
+    const votes = JSON.parse(localStorage.getItem('mm-votes') || '{}');
+    votes[id] = dir;
+    localStorage.setItem('mm-votes', JSON.stringify(votes));
+    const count = document.getElementById('count-' + id);
+    const up = document.getElementById('up-' + id);
+    const dn = document.getElementById('dn-' + id);
+    if (count) count.textContent = dir === 'up' ? 'Thanks! 👍' : 'Got it. 👎';
+    if (up) up.classList.toggle('voted', dir === 'up');
+    if (dn) dn.classList.toggle('voted', dir === 'dn');
+  }
+
+  function restoreVotes() {
+    const votes = JSON.parse(localStorage.getItem('mm-votes') || '{}');
+    if (votes['site']) {
+      const up = document.getElementById('up-site');
+      const dn = document.getElementById('dn-site');
+      const count = document.getElementById('count-site');
+      if (up) up.classList.toggle('voted', votes['site'] === 'up');
+      if (dn) dn.classList.toggle('voted', votes['site'] === 'dn');
+      if (count) count.textContent = votes['site'] === 'up' ? 'Thanks so much! 👍' : 'Thanks for the feedback 👎';
+    }
+  }
+
+  addShareAndHelpful();
+  restoreVotes();
 
   // Debounce utility
   function debounce(fn, delay) {
